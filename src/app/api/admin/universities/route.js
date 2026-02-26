@@ -6,7 +6,9 @@ import connectDB from '@/lib/db';
 export const GET = withAuth(async (req) => {
     try {
         await connectDB();
-        const universities = await University.find().sort('-createdAt');
+        const universities = await University.find()
+            .sort('-createdAt')
+            .lean();
         return NextResponse.json(universities);
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });

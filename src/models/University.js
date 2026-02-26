@@ -153,5 +153,7 @@ UniversitySchema.index({ slug: 1 });
 UniversitySchema.index({ featured: 1 });
 UniversitySchema.index({ isActive: 1 });
 UniversitySchema.index({ rating: 1 });
+UniversitySchema.index({ featured: -1, createdAt: -1 });
+UniversitySchema.index({ isActive: 1, featured: 1 });
 
 export default mongoose.models.University || mongoose.model('University', UniversitySchema);

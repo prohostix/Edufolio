@@ -13,7 +13,8 @@ export const GET = withAuth(async (req, { admin }) => {
             totalPrograms,
             totalEnquiries,
             newEnquiries,
-            recentEnquiries
+            recentEnquiries,
+            enquiriesByStatus
         ] = await Promise.all([
             University.countDocuments(),
             Program.countDocuments(),
@@ -24,10 +25,10 @@ export const GET = withAuth(async (req, { admin }) => {
                 .limit(5)
                 .populate('programId', 'name')
                 .populate('universityId', 'name')
-        ]);
-
-        const enquiriesByStatus = await Enquiry.aggregate([
-            { $group: { _id: '$status', count: { $sum: 1 } } }
+                .lean(),
+            Enquiry.aggregate([
+                { $group: { _id: '$status', count: { $sum: 1 } } }
+            ])
         ]);
 
         return NextResponse.json({

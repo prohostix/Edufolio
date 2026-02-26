@@ -169,5 +169,7 @@ ProgramSchema.index({ featured: 1 });
 ProgramSchema.index({ isActive: 1 });
 ProgramSchema.index({ slug: 1 });
 ProgramSchema.index({ fee: 1 });
+ProgramSchema.index({ featured: -1, createdAt: -1 });
+ProgramSchema.index({ isActive: 1, featured: 1 });
 
 export default mongoose.models.Program || mongoose.model('Program', ProgramSchema);

@@ -24,7 +24,8 @@ export const GET = withAuth(async (req) => {
         const enquiries = await Enquiry.find(query)
             .populate('programId', 'name slug')
             .populate('universityId', 'name slug')
-            .sort('-createdAt');
+            .sort('-createdAt')
+            .lean();
 
         return NextResponse.json(enquiries);
     } catch (error) {

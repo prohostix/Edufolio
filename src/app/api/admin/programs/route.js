@@ -15,7 +15,8 @@ export const GET = withAuth(async (req) => {
 
         const programs = await Program.find(query)
             .populate('universityId', 'name slug logo')
-            .sort('-createdAt');
+            .sort('-createdAt')
+            .lean();
 
         return NextResponse.json(programs);
     } catch (error) {

@@ -16,10 +16,7 @@ export async function GET(req) {
         if (featured === 'true') query.featured = true;
 
         if (search) {
-            query.$or = [
-                { name: { $regex: search, $options: 'i' } },
-                { location: { $regex: search, $options: 'i' } }
-            ];
+            query.$text = { $search: search };
         }
 
         const universities = await University.find(query)
