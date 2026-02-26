@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { withAuth } from '@/lib/auth';
 import Enquiry from '@/models/Enquiry';
 import connectDB from '@/lib/db';
@@ -6,7 +7,12 @@ import connectDB from '@/lib/db';
 export const PUT = withAuth(async (req, { params }) => {
     try {
         await connectDB();
-        const id = params.id;
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid Enquiry ID' }, { status: 400 });
+        }
+
         const { status, notes } = await req.json();
 
         const updateData = {};
@@ -34,7 +40,13 @@ export const PUT = withAuth(async (req, { params }) => {
 export const DELETE = withAuth(async (req, { params }) => {
     try {
         await connectDB();
-        const enquiry = await Enquiry.findByIdAndDelete(params.id);
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid Enquiry ID' }, { status: 400 });
+        }
+
+        const enquiry = await Enquiry.findByIdAndDelete(id);
 
         if (!enquiry) {
             return NextResponse.json({ message: 'Enquiry not found' }, { status: 404 });

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Program from '@/models/Program';
+import University from '@/models/University';
 import connectDB from '@/lib/db';
 
 export async function GET(req) {
@@ -12,8 +13,11 @@ export async function GET(req) {
         const universityId = searchParams.get('university');
         const minFee = searchParams.get('minFee');
         const maxFee = searchParams.get('maxFee');
+        const featured = searchParams.get('featured');
 
         let query = { isActive: true };
+
+        if (featured === 'true') query.featured = true;
 
         if (category) query.category = category;
         if (level) query.level = level;

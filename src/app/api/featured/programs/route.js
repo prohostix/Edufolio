@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Program from '@/models/Program';
+import University from '@/models/University';
 import connectDB from '@/lib/db';
 
 export async function GET() {
@@ -10,8 +11,8 @@ export async function GET() {
             featured: true
         })
             .populate('universityId', 'name logo')
-            .limit(8)
             .select('name slug category level fee duration universityId')
+            .limit(8)
             .lean();
 
         return NextResponse.json(programs);

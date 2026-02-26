@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { withAuth } from '@/lib/auth';
 import Program from '@/models/Program';
 import connectDB from '@/lib/db';
@@ -6,14 +7,19 @@ import connectDB from '@/lib/db';
 export const PUT = withAuth(async (req, { params }) => {
     try {
         await connectDB();
-        const id = params.id;
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid Program ID' }, { status: 400 });
+        }
+
         const body = await req.json();
 
         if (body.fee) body.fee = Number(body.fee);
 
         const program = await Program.findByIdAndUpdate(
             id,
-            { ...body, updatedAt: new Date() },
+            body,
             { new: true, runValidators: true }
         ).populate('universityId', 'name slug logo');
 
@@ -30,7 +36,13 @@ export const PUT = withAuth(async (req, { params }) => {
 export const DELETE = withAuth(async (req, { params }) => {
     try {
         await connectDB();
-        const program = await Program.findByIdAndDelete(params.id);
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid Program ID' }, { status: 400 });
+        }
+
+        const program = await Program.findByIdAndDelete(id);
 
         if (!program) {
             return NextResponse.json({ message: 'Program not found' }, { status: 404 });

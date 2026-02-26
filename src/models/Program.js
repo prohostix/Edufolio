@@ -161,6 +161,7 @@ ProgramSchema.pre('save', function (next) {
 });
 
 // Index for faster queries
+ProgramSchema.index({ name: 'text', category: 'text', description: 'text' });
 ProgramSchema.index({ universityId: 1 });
 ProgramSchema.index({ category: 1 });
 ProgramSchema.index({ level: 1 });

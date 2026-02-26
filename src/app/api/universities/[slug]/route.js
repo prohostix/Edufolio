@@ -6,7 +6,7 @@ import connectDB from '@/lib/db';
 export async function GET(req, { params }) {
     try {
         await connectDB();
-        const slug = params.slug;
+        const { slug } = await params;
 
         const university = await University.findOne({
             slug,

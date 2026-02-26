@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { withAuth } from '@/lib/auth';
 import University from '@/models/University';
 import Program from '@/models/Program';
@@ -7,7 +8,12 @@ import connectDB from '@/lib/db';
 export const PUT = withAuth(async (req, { params }) => {
     try {
         await connectDB();
-        const id = params.id;
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid University ID' }, { status: 400 });
+        }
+
         const body = await req.json();
 
         if (body.slug) {
@@ -26,7 +32,7 @@ export const PUT = withAuth(async (req, { params }) => {
 
         const university = await University.findByIdAndUpdate(
             id,
-            { ...body, updatedAt: new Date() },
+            body,
             { new: true, runValidators: true }
         );
 
@@ -43,7 +49,11 @@ export const PUT = withAuth(async (req, { params }) => {
 export const DELETE = withAuth(async (req, { params }) => {
     try {
         await connectDB();
-        const id = params.id;
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid University ID' }, { status: 400 });
+        }
 
         const university = await University.findById(id);
         if (!university) {

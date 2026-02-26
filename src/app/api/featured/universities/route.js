@@ -9,8 +9,8 @@ export async function GET() {
             isActive: true,
             featured: true
         })
-            .limit(6)
             .select('name slug logo banner location rating')
+            .limit(6)
             .lean();
 
         return NextResponse.json(universities);

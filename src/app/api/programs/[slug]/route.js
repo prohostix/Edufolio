@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import Program from '@/models/Program';
+import University from '@/models/University';
 import connectDB from '@/lib/db';
 
 export async function GET(req, { params }) {
     try {
         await connectDB();
-        const slug = params.slug;
+        const { slug } = await params;
 
         const program = await Program.findOne({
             slug,
