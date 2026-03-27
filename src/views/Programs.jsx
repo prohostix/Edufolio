@@ -1465,7 +1465,7 @@ const Programs = () => {
                         <div className="hero-images">
                             <div className="main-image-container">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=350&fit=crop" 
+                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=350&fit=crop&auto=format&q=80" 
                                     alt="Students studying"
                                     className="main-image"
                                 />
@@ -1474,7 +1474,7 @@ const Programs = () => {
 
                             <div className="floating-image floating-image-1">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=180&h=130&fit=crop" 
+                                    src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=180&h=130&fit=crop&auto=format&q=80" 
                                     alt="Student with laptop"
                                     className="floating-img"
                                 />
@@ -1482,7 +1482,7 @@ const Programs = () => {
 
                             <div className="floating-image floating-image-2">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=160&h=120&fit=crop" 
+                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=160&h=120&fit=crop&auto=format&q=80" 
                                     alt="Team collaboration"
                                     className="floating-img"
                                 />
@@ -1490,7 +1490,7 @@ const Programs = () => {
 
                             <div className="floating-image floating-image-3">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=140&h=100&fit=crop" 
+                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=140&h=100&fit=crop&auto=format&q=80" 
                                     alt="Online learning"
                                     className="floating-img"
                                 />

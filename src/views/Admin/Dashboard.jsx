@@ -408,6 +408,13 @@ const Dashboard = () => {
                         <i className="fa-solid fa-magnifying-glass"></i>
                         <span>SEO Settings</span>
                     </button>
+                    <button
+                        style={activeTab === 'coursefinder' ? styles.navItemActive : styles.navItem}
+                        onClick={() => handleTabChange('coursefinder')}
+                    >
+                        <i className="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Course Finder</span>
+                    </button>
                 </nav>
 
                 <div style={styles.sidebarFooter}>
@@ -433,6 +440,7 @@ const Dashboard = () => {
                             {activeTab === 'programs' && 'Manage Programs'}
                             {activeTab === 'enquiries' && 'Enquiries'}
                             {activeTab === 'seo' && 'SEO Configuration'}
+                            {activeTab === 'coursefinder' && 'Course Finder Questions'}
                         </h1>
                         <p style={styles.pageSubtitle}>
                             Welcome back, {admin?.name || 'Admin'}! 👋
@@ -1213,6 +1221,11 @@ const Dashboard = () => {
                                 </div>
                             </form>
                         </div>
+                    )}
+
+                    {/* Course Finder Questions Tab */}
+                    {activeTab === 'coursefinder' && (
+                        <CourseFinderQuestionsTab showToast={showToast} token={localStorage.getItem('adminToken')} />
                     )}
                 </div>
             </main>
@@ -2006,3 +2019,255 @@ const styles = {
 };
 
 export default Dashboard;
+
+// ─── Course Finder Questions Tab ─────────────────────────────────────────────
+const BLANK_OPT = { value: '', label: '', icon: 'fa-circle', categories: [], min: '', max: '' };
+const BLANK_Q = { question: '', field: '', order: 0, isActive: true, options: [{ ...BLANK_OPT }] };
+
+function CourseFinderQuestionsTab({ showToast, token }) {
+    const [questions, setQuestions] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+    const [modal, setModal] = React.useState(null);
+    const [saving, setSaving] = React.useState(false);
+    const [seeding, setSeeding] = React.useState(false);
+
+    const h = () => ({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
+
+    const load = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/admin/course-finder-questions', { headers: h() });
+            const data = await res.json();
+            setQuestions(Array.isArray(data) ? data : []);
+        } catch { showToast('Failed to load questions', 'error'); }
+        finally { setLoading(false); }
+    };
+
+    React.useEffect(() => { load(); }, []);
+
+    const seed = async () => {
+        setSeeding(true);
+        try {
+            const res = await fetch('/api/admin/course-finder-questions/seed', { method: 'POST', headers: h() });
+            const d = await res.json();
+            showToast(d.message); load();
+        } catch { showToast('Seed failed', 'error'); }
+        finally { setSeeding(false); }
+    };
+
+    const save = async () => {
+        const { data, mode } = modal;
+        if (!data.question.trim() || !data.field.trim() || !data.options.length) {
+            showToast('Question, field, and at least one option are required', 'error'); return;
+        }
+        setSaving(true);
+        try {
+            const url = mode === 'add' ? '/api/admin/course-finder-questions' : `/api/admin/course-finder-questions/${data._id}`;
+            const cleanOptions = data.options.map(o => ({
+                value: o.value, label: o.label, icon: o.icon || 'fa-circle',
+                ...(o.categories?.length ? { categories: o.categories } : {}),
+                ...(o.min !== '' && o.min !== undefined ? { min: Number(o.min) } : {}),
+                ...(o.max !== '' && o.max !== undefined ? { max: Number(o.max) } : {}),
+            }));
+            const res = await fetch(url, { method: mode === 'add' ? 'POST' : 'PUT', headers: h(), body: JSON.stringify({ ...data, options: cleanOptions }) });
+            if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
+            showToast(mode === 'add' ? 'Question added!' : 'Question updated!');
+            setModal(null); load();
+        } catch (err) { showToast(err.message || 'Save failed', 'error'); }
+        finally { setSaving(false); }
+    };
+
+    const deleteQ = async (id, question) => {
+        if (!confirm(`Delete: "${question}"?`)) return;
+        try {
+            await fetch(`/api/admin/course-finder-questions/${id}`, { method: 'DELETE', headers: h() });
+            showToast('Deleted'); load();
+        } catch { showToast('Delete failed', 'error'); }
+    };
+
+    const toggleActive = async (q) => {
+        try {
+            await fetch(`/api/admin/course-finder-questions/${q._id}`, { method: 'PUT', headers: h(), body: JSON.stringify({ isActive: !q.isActive }) });
+            showToast('Status updated'); load();
+        } catch { showToast('Failed', 'error'); }
+    };
+
+    const setField = (key, val) => setModal(m => ({ ...m, data: { ...m.data, [key]: val } }));
+    const setOpt = (i, key, val) => setModal(m => { const opts = [...m.data.options]; opts[i] = { ...opts[i], [key]: val }; return { ...m, data: { ...m.data, options: opts } }; });
+    const addOpt = () => setModal(m => ({ ...m, data: { ...m.data, options: [...m.data.options, { ...BLANK_OPT }] } }));
+    const removeOpt = (i) => setModal(m => ({ ...m, data: { ...m.data, options: m.data.options.filter((_, idx) => idx !== i) } }));
+
+    const cfCard = { background: '#fff', borderRadius: '16px', padding: '25px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', marginBottom: '15px' };
+    const cfInput = { width: '100%', padding: '11px 14px', border: '2px solid #E2E8F0', borderRadius: '10px', fontSize: '0.95rem', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' };
+    const cfBtn = (bg) => ({ padding: '10px 18px', background: bg, color: '#fff', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: '8px' });
+    const cfIconBtn = (color) => ({ width: '34px', height: '34px', background: color + '18', color, border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' });
+
+    return (
+        <div>
+            {/* Header card */}
+            <div style={cfCard}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '15px' }}>
+                    <div>
+                        <h2 style={{ margin: '0 0 6px', fontSize: '1.2rem', fontWeight: 700, color: '#0F172A' }}>
+                            <i className="fa-solid fa-wand-magic-sparkles" style={{ color: '#FF6B35', marginRight: '10px' }}></i>
+                            Course Finder Questions
+                        </h2>
+                        <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
+                            Users must submit an enquiry before accessing the quiz. Manage questions and options below.
+                        </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        {questions.length === 0 && (
+                            <button onClick={seed} disabled={seeding} style={cfBtn('#6366F1')}>
+                                <i className="fa-solid fa-seedling"></i> {seeding ? 'Seeding...' : 'Seed Defaults'}
+                            </button>
+                        )}
+                        <button onClick={() => setModal({ mode: 'add', data: { ...BLANK_Q, options: [{ ...BLANK_OPT }] } })} style={cfBtn('#FF6B35')}>
+                            <i className="fa-solid fa-plus"></i> Add Question
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Questions */}
+            {loading ? (
+                <div style={{ textAlign: 'center', padding: '60px', color: '#64748B' }}>
+                    <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '2rem', color: '#FF6B35' }}></i>
+                    <p style={{ marginTop: '15px' }}>Loading...</p>
+                </div>
+            ) : questions.length === 0 ? (
+                <div style={{ ...cfCard, textAlign: 'center', padding: '60px' }}>
+                    <i className="fa-solid fa-circle-question" style={{ fontSize: '3rem', color: '#CBD5E1', display: 'block', marginBottom: '15px' }}></i>
+                    <h3 style={{ color: '#334155', margin: '0 0 10px' }}>No questions yet</h3>
+                    <p style={{ color: '#64748B' }}>Click "Seed Defaults" to add the standard 5-question quiz, or add your own.</p>
+                </div>
+            ) : questions.map((q, idx) => (
+                <div key={q._id} style={{ ...cfCard, borderLeft: `4px solid ${q.isActive ? '#FF6B35' : '#CBD5E1'}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                                <span style={{ background: '#FFF7ED', color: '#FF6B35', padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>Q{idx + 1}</span>
+                                <span style={{ background: '#F1F5F9', color: '#64748B', padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem' }}>field: {q.field}</span>
+                                <span style={{ background: '#F1F5F9', color: '#64748B', padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem' }}>order: {q.order}</span>
+                                <span style={{ padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600, background: q.isActive ? '#DCFCE7' : '#FEE2E2', color: q.isActive ? '#16A34A' : '#DC2626' }}>{q.isActive ? 'Active' : 'Inactive'}</span>
+                            </div>
+                            <h3 style={{ margin: '0 0 12px', fontSize: '1.05rem', color: '#0F172A' }}>{q.question}</h3>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {q.options.map(o => (
+                                    <span key={o.value} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '5px 12px', borderRadius: '8px', fontSize: '0.82rem', color: '#334155', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                        <i className={`fa-solid ${o.icon || 'fa-circle'}`} style={{ color: '#FF6B35', fontSize: '0.75rem' }}></i>
+                                        {o.label}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                            <button onClick={() => toggleActive(q)} style={cfIconBtn(q.isActive ? '#D97706' : '#16A34A')} title={q.isActive ? 'Deactivate' : 'Activate'}>
+                                <i className={`fa-solid ${q.isActive ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            </button>
+                            <button onClick={() => setModal({ mode: 'edit', data: JSON.parse(JSON.stringify(q)) })} style={cfIconBtn('#3B82F6')} title="Edit">
+                                <i className="fa-solid fa-pen"></i>
+                            </button>
+                            <button onClick={() => deleteQ(q._id, q.question)} style={cfIconBtn('#DC2626')} title="Delete">
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ))}
+
+            {/* Modal */}
+            {modal && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
+                    <div style={{ background: '#fff', borderRadius: '20px', width: '100%', maxWidth: '680px', maxHeight: '90vh', overflow: 'auto', padding: '35px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+                            <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700, color: '#0F172A' }}>
+                                {modal.mode === 'add' ? 'Add New Question' : 'Edit Question'}
+                            </h2>
+                            <button onClick={() => setModal(null)} style={{ background: '#F1F5F9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer', fontSize: '1rem', color: '#64748B' }}>✕</button>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontWeight: 600, color: '#334155', fontSize: '0.9rem', marginBottom: '6px' }}>Question Text *</label>
+                                <input value={modal.data.question} onChange={e => setField('question', e.target.value)} placeholder="e.g. What is your highest education?" style={cfInput} />
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                                <div>
+                                    <label style={{ display: 'block', fontWeight: 600, color: '#334155', fontSize: '0.9rem', marginBottom: '6px' }}>Field Name *</label>
+                                    <input value={modal.data.field} onChange={e => setField('field', e.target.value)} placeholder="education" style={cfInput} />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', fontWeight: 600, color: '#334155', fontSize: '0.9rem', marginBottom: '6px' }}>Order</label>
+                                    <input type="number" value={modal.data.order} onChange={e => setField('order', Number(e.target.value))} style={cfInput} />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', fontWeight: 600, color: '#334155', fontSize: '0.9rem', marginBottom: '6px' }}>Status</label>
+                                    <select value={String(modal.data.isActive)} onChange={e => setField('isActive', e.target.value === 'true')} style={cfInput}>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Options */}
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                    <label style={{ fontWeight: 600, color: '#334155', fontSize: '0.9rem' }}>Options *</label>
+                                    <button onClick={addOpt} style={{ ...cfBtn('#10B981'), padding: '6px 14px', fontSize: '0.82rem' }}>
+                                        <i className="fa-solid fa-plus"></i> Add Option
+                                    </button>
+                                </div>
+                                {modal.data.options.map((opt, i) => (
+                                    <div key={i} style={{ background: '#F8FAFC', borderRadius: '12px', padding: '14px', marginBottom: '10px', border: '1px solid #E2E8F0' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                            <span style={{ fontWeight: 600, color: '#64748B', fontSize: '0.82rem' }}>Option {i + 1}</span>
+                                            {modal.data.options.length > 1 && (
+                                                <button onClick={() => removeOpt(i)} style={{ background: '#FEE2E2', color: '#DC2626', border: 'none', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer', fontSize: '0.8rem', fontFamily: 'inherit' }}>Remove</button>
+                                            )}
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>Value *</label>
+                                                <input value={opt.value} onChange={e => setOpt(i, 'value', e.target.value)} placeholder="graduate" style={{ ...cfInput, padding: '8px 12px' }} />
+                                            </div>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>Label *</label>
+                                                <input value={opt.label} onChange={e => setOpt(i, 'label', e.target.value)} placeholder="Graduate (Bachelor's)" style={{ ...cfInput, padding: '8px 12px' }} />
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>FA Icon</label>
+                                                <input value={opt.icon} onChange={e => setOpt(i, 'icon', e.target.value)} placeholder="fa-graduation-cap" style={{ ...cfInput, padding: '8px 12px' }} />
+                                            </div>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>Min Fee</label>
+                                                <input type="number" value={opt.min ?? ''} onChange={e => setOpt(i, 'min', e.target.value)} placeholder="50000" style={{ ...cfInput, padding: '8px 12px' }} />
+                                            </div>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>Max Fee</label>
+                                                <input type="number" value={opt.max ?? ''} onChange={e => setOpt(i, 'max', e.target.value)} placeholder="100000" style={{ ...cfInput, padding: '8px 12px' }} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>Categories (comma-separated)</label>
+                                            <input value={Array.isArray(opt.categories) ? opt.categories.join(', ') : ''} onChange={e => setOpt(i, 'categories', e.target.value.split(',').map(s => s.trim()).filter(Boolean))} placeholder="MBA, BBA" style={{ ...cfInput, padding: '8px 12px' }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '25px', paddingTop: '20px', borderTop: '1px solid #E2E8F0' }}>
+                            <button onClick={() => setModal(null)} style={{ padding: '12px 24px', background: '#F1F5F9', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontFamily: 'inherit', color: '#64748B' }}>Cancel</button>
+                            <button onClick={save} disabled={saving} style={{ ...cfBtn('#FF6B35'), padding: '12px 28px', opacity: saving ? 0.7 : 1 }}>
+                                {saving ? <><i className="fa-solid fa-spinner fa-spin"></i> Saving...</> : <><i className="fa-solid fa-check"></i> {modal.mode === 'add' ? 'Add Question' : 'Save Changes'}</>}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

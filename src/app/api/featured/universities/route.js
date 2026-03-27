@@ -13,7 +13,9 @@ export async function GET() {
             .limit(6)
             .lean();
 
-        return NextResponse.json(universities);
+        return NextResponse.json(universities, {
+            headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600' }
+        });
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }

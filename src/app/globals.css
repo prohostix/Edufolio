@@ -76,3 +76,11 @@ input:focus, select:focus, textarea:focus {
 .fa-spin {
     animation: spin 1s linear infinite;
 }
+
+/* Hide broken images gracefully */
+img {
+  background: #f1f5f9;
+}
+img[src=""], img:not([src]) {
+  visibility: hidden;
+}

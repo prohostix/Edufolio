@@ -176,7 +176,7 @@ const Contact = () => {
                     <div className="ct-hero-images" aria-hidden="true">
                         <div className="ct-main-image-container">
                             <img
-                                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=380&h=420&fit=crop"
+                                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=380&h=420&fit=crop&auto=format&q=80"
                                 alt=""
                                 className="ct-main-image"
                                 loading="lazy"
@@ -186,7 +186,7 @@ const Contact = () => {
 
                         <div className="ct-floating-image ct-floating-image-1">
                             <img
-                                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=150&h=110&fit=crop"
+                                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=150&h=110&fit=crop&auto=format&q=80"
                                 alt=""
                                 className="ct-floating-img"
                                 loading="lazy"
@@ -195,7 +195,7 @@ const Contact = () => {
 
                         <div className="ct-floating-image ct-floating-image-2">
                             <img
-                                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=140&h=100&fit=crop"
+                                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=140&h=100&fit=crop&auto=format&q=80"
                                 alt=""
                                 className="ct-floating-img"
                                 loading="lazy"
@@ -204,7 +204,7 @@ const Contact = () => {
 
                         <div className="ct-floating-image ct-floating-image-3">
                             <img
-                                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=120&h=85&fit=crop"
+                                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=120&h=85&fit=crop&auto=format&q=80"
                                 alt=""
                                 className="ct-floating-img"
                                 loading="lazy"

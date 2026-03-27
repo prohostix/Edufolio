@@ -170,11 +170,46 @@ const Universities = () => {
                 .tagline {
                     display: flex;
                     gap: 15px;
-                    margin-bottom: 30px;
+                    margin-bottom: 20px;
                     color: var(--light-blue);
                     font-size: 1.1rem;
                     font-weight: 600;
                     font-style: italic;
+                }
+
+                .ugc-btns {
+                    display: flex;
+                    gap: 12px;
+                    margin-bottom: 30px;
+                    flex-wrap: wrap;
+                }
+
+                .ugc-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 20px;
+                    background: rgba(255, 255, 255, 0.12);
+                    color: #fff;
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 10px;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    text-decoration: none;
+                    backdrop-filter: blur(8px);
+                    transition: all 0.25s ease;
+                }
+
+                .ugc-btn i {
+                    color: #ff6b6b;
+                    font-size: 1rem;
+                }
+
+                .ugc-btn:hover {
+                    background: rgba(255, 255, 255, 0.22);
+                    border-color: rgba(255, 255, 255, 0.6);
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
                 }
 
                 .hero-stats {
@@ -1279,6 +1314,27 @@ const Universities = () => {
                                 <span>succeed.</span>
                             </div>
 
+                            <div className="ugc-btns">
+                                <a
+                                    href="https://drive.google.com/file/d/1OOS-oIgoEb9EJ2oZfnfC4VceHW8_nAuF/view?usp=drive_link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="ugc-btn"
+                                >
+                                    <i className="fa-solid fa-file-pdf"></i>
+                                    <span>UGC Approval</span>
+                                </a>
+                                <a
+                                    href="https://drive.google.com/file/d/1IsoYcLTa5zkOcOpyr8lwvUdhvhSZtMN1/view?usp=drive_link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="ugc-btn"
+                                >
+                                    <i className="fa-solid fa-file-pdf"></i>
+                                    <span>UGC Circular</span>
+                                </a>
+                            </div>
+
                             <div className="hero-stats">
                                 <div className="hero-stat">
                                     <span className="hero-stat-number">50+</span>
@@ -1300,7 +1356,7 @@ const Universities = () => {
                         <div className="hero-images">
                             <div className="main-image-container">
                                 <img
-                                    src="https://images.unsplash.com/photo-1562774053-701939374585?w=500&h=400&fit=crop"
+                                    src="https://images.unsplash.com/photo-1562774053-701939374585?w=500&h=400&fit=crop&auto=format&q=80"
                                     alt="University campus"
                                     className="main-image"
                                 />
@@ -1309,7 +1365,7 @@ const Universities = () => {
 
                             <div className="floating-image floating-image-1">
                                 <img
-                                    src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=200&h=150&fit=crop"
+                                    src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=200&h=150&fit=crop&auto=format&q=80"
                                     alt="Graduation ceremony"
                                     className="floating-img"
                                 />
@@ -1317,7 +1373,7 @@ const Universities = () => {
 
                             <div className="floating-image floating-image-2">
                                 <img
-                                    src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=180&h=130&fit=crop"
+                                    src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=180&h=130&fit=crop&auto=format&q=80"
                                     alt="Students studying"
                                     className="floating-img"
                                 />
@@ -1454,11 +1510,11 @@ const Universities = () => {
 
                                             <div className="card-banner">
                                                 <img
-                                                    src={university.banner || 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=200&fit=crop'}
+                                                    src={university.banner || 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=200&fit=crop&auto=format&q=80'}
                                                     alt={university.name}
                                                     className="banner-img"
                                                     onError={(e) => {
-                                                        e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=200&fit=crop';
+                                                        e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=200&fit=crop&auto=format&q=80';
                                                     }}
                                                 />
                                                 <div className="banner-overlay"></div>

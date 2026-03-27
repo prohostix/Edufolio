@@ -1800,7 +1800,7 @@ const Home = () => {
                         <div className="hero-images">
                             <div className="main-image-container">
                                 <img
-                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=700&fit=crop"
+                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=700&fit=crop&auto=format&q=80"
                                     alt="Students studying online"
                                     className="main-image"
                                 />
@@ -1809,7 +1809,7 @@ const Home = () => {
 
                             <div className="floating-image floating-image-1">
                                 <img
-                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=300&h=200&fit=crop"
+                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=300&h=200&fit=crop&auto=format&q=80"
                                     alt="Team collaboration"
                                     className="floating-img"
                                 />
@@ -1817,7 +1817,7 @@ const Home = () => {
 
                             <div className="floating-image floating-image-2">
                                 <img
-                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300&h=200&fit=crop"
+                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300&h=200&fit=crop&auto=format&q=80"
                                     alt="Online learning"
                                     className="floating-img"
                                 />

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ProgramSchema = new mongoose.Schema({
     universityId: {
@@ -13,7 +13,7 @@ const ProgramSchema = new mongoose.Schema({
     },
     slug: {
         type: String,
-        unique: true
+        unique: true   // unique:true already creates an index — no need for schema.index({ slug:1 })
     },
     category: {
         type: String,
@@ -51,104 +51,33 @@ const ProgramSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Description is required']
     },
-    // SEO Fields
-    metaTitle: {
-        type: String,
-        trim: true
-    },
-    metaDescription: {
-        type: String,
-        trim: true
-    },
-    metaKeywords: {
-        type: String,
-        trim: true
-    },
-    canonicalUrl: {
-        type: String,
-        trim: true
-    },
-    // Open Graph Fields
-    ogTitle: {
-        type: String,
-        trim: true
-    },
-    ogDescription: {
-        type: String,
-        trim: true
-    },
-    ogImage: {
-        type: String,
-        trim: true
-    },
-    // Robots Meta
+    metaTitle:       { type: String, trim: true },
+    metaDescription: { type: String, trim: true },
+    metaKeywords:    { type: String, trim: true },
+    canonicalUrl:    { type: String, trim: true },
+    ogTitle:         { type: String, trim: true },
+    ogDescription:   { type: String, trim: true },
+    ogImage:         { type: String, trim: true },
     robots: {
         type: String,
         enum: ['index, follow', 'noindex, follow', 'index, nofollow', 'noindex, nofollow'],
         default: 'index, follow'
     },
-    eligibility: {
-        type: String,
-        default: 'Bachelor\'s degree from a recognized university'
-    },
-    image: {
-        type: String,
-        default: ''
-    },
-    brochureUrl: {
-        type: String,
-        default: ''
-    },
-    youtubeUrl: {
-        type: String,
-        default: ''
-    },
-    syllabus: {
-        type: [String],
-        default: []
-    },
-    highlights: {
-        type: [String],
-        default: []
-    },
-    careerOptions: {
-        type: [String],
-        default: []
-    },
-    specializations: {
-        type: [String],
-        default: []
-    },
-    semesters: {
-        type: Number,
-        default: 4
-    },
-    credits: {
-        type: Number,
-        default: 0
-    },
-    featured: {
-        type: Boolean,
-        default: false
-    },
-    ranking: {
-        type: Number
-    },
-    isActive: {
-        type: Boolean,
-        default: true
-    },
-    metaTitle: {
-        type: String
-    },
-    metaDescription: {
-        type: String
-    }
-}, {
-    timestamps: true
-});
+    eligibility:     { type: String, default: "Bachelor's degree from a recognized university" },
+    image:           { type: String, default: '' },
+    brochureUrl:     { type: String, default: '' },
+    youtubeUrl:      { type: String, default: '' },
+    syllabus:        { type: [String], default: [] },
+    highlights:      { type: [String], default: [] },
+    careerOptions:   { type: [String], default: [] },
+    specializations: { type: [String], default: [] },
+    semesters:       { type: Number, default: 4 },
+    credits:         { type: Number, default: 0 },
+    featured:        { type: Boolean, default: false },
+    ranking:         { type: Number },
+    isActive:        { type: Boolean, default: true },
+}, { timestamps: true });
 
-// Create slug from name before saving
 ProgramSchema.pre('save', function (next) {
     if (this.isModified('name') || !this.slug) {
         this.slug = this.name
@@ -160,16 +89,12 @@ ProgramSchema.pre('save', function (next) {
     next();
 });
 
-// Index for faster queries
+// Compound + supporting indexes (slug covered by unique:true above)
 ProgramSchema.index({ name: 'text', category: 'text', description: 'text' });
-ProgramSchema.index({ universityId: 1 });
-ProgramSchema.index({ category: 1 });
+ProgramSchema.index({ isActive: 1, featured: -1, createdAt: -1 });
+ProgramSchema.index({ universityId: 1, isActive: 1 });
+ProgramSchema.index({ category: 1, isActive: 1 });
 ProgramSchema.index({ level: 1 });
-ProgramSchema.index({ featured: 1 });
-ProgramSchema.index({ isActive: 1 });
-ProgramSchema.index({ slug: 1 });
 ProgramSchema.index({ fee: 1 });
-ProgramSchema.index({ featured: -1, createdAt: -1 });
-ProgramSchema.index({ isActive: 1, featured: 1 });
 
 export default mongoose.models.Program || mongoose.model('Program', ProgramSchema);

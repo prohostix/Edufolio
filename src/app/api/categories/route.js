@@ -6,7 +6,9 @@ export async function GET() {
     try {
         await connectDB();
         const categories = await Program.distinct('category', { isActive: true });
-        return NextResponse.json(categories);
+        return NextResponse.json(categories, {
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' }
+        });
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }

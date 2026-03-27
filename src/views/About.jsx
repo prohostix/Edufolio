@@ -1280,7 +1280,7 @@ const About = () => {
                         <div className="hero-images">
                             <div className="main-image-container">
                                 <img
-                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=450&fit=crop"
+                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=450&fit=crop&auto=format&q=80"
                                     alt="Team collaboration"
                                     className="main-image"
                                 />
@@ -1289,7 +1289,7 @@ const About = () => {
 
                             <div className="floating-image floating-image-1">
                                 <img
-                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=160&h=120&fit=crop"
+                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=160&h=120&fit=crop&auto=format&q=80"
                                     alt="Students learning"
                                     className="floating-img"
                                 />
@@ -1297,7 +1297,7 @@ const About = () => {
 
                             <div className="floating-image floating-image-2">
                                 <img
-                                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=150&h=110&fit=crop"
+                                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=150&h=110&fit=crop&auto=format&q=80"
                                     alt="Success celebration"
                                     className="floating-img"
                                 />
@@ -1305,7 +1305,7 @@ const About = () => {
 
                             <div className="floating-image floating-image-3">
                                 <img
-                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=130&h=95&fit=crop"
+                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=130&h=95&fit=crop&auto=format&q=80"
                                     alt="Online meeting"
                                     className="floating-img"
                                 />
@@ -1370,7 +1370,7 @@ const About = () => {
                             </div>
                             <div className="mission-image">
                                 <img
-                                    src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=500&h=400&fit=crop"
+                                    src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=500&h=400&fit=crop&auto=format&q=80"
                                     alt="Students learning"
                                 />
                                 <div className="image-accent"></div>
@@ -1385,7 +1385,7 @@ const About = () => {
                         <div className="vision-grid">
                             <div className="vision-image">
                                 <img
-                                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=500&h=400&fit=crop"
+                                    src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=500&h=400&fit=crop&auto=format&q=80"
                                     alt="Team discussion"
                                 />
                             </div>

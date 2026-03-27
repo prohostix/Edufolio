@@ -13,7 +13,7 @@ function EnquiryGate({ onSuccess }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/enquiry', {
+      const res = await fetch('/api/public/enquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, source: 'Course Finder' }),
@@ -76,7 +76,6 @@ export default function CourseFinder() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [isSuggestion, setIsSuggestion] = useState(false);
   const [animate, setAnimate] = useState(true);
   const [questionsLoading, setQuestionsLoading] = useState(false);
 
@@ -113,7 +112,6 @@ export default function CourseFinder() {
     setAnswers({});
     setResults([]);
     setShowResults(false);
-    setIsSuggestion(false);
     setAnimate(true);
   };
 
@@ -138,71 +136,46 @@ export default function CourseFinder() {
   const findCourses = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/programs');
-      const allPrograms = await res.json();
+      const res = await fetch('/api/public/programs');
+      let programs = await res.json();
 
-      // Apply filters progressively — relax one at a time until we get results
-      const applyFilters = (skipFields = []) => {
-        let filtered = [...allPrograms];
+      questions.forEach(q => {
+        const val = answers[q.field];
+        if (!val) return;
+        const opt = q.options.find(o => o.value === val);
+        if (!opt) return;
 
-        questions.forEach(q => {
-          if (skipFields.includes(q.field)) return;
-          const val = answers[q.field];
-          if (!val) return;
-          const opt = q.options.find(o => o.value === val);
-          if (!opt) return;
+        // education filter
+        if (q.field === 'education') {
+          if (val === '12th') programs = programs.filter(p => p.level === 'Undergraduate' || p.level === 'UG');
+          else if (val === 'graduate' || val === 'working') programs = programs.filter(p => ['Postgraduate', 'PG', 'Undergraduate', 'UG'].includes(p.level));
+        }
+        // interest / categories filter
+        if (opt.categories?.length) {
+          programs = programs.filter(p =>
+            opt.categories.some(cat =>
+              p.category?.toLowerCase().includes(cat.toLowerCase()) ||
+              p.name?.toLowerCase().includes(cat.toLowerCase())
+            )
+          );
+        }
+        // budget filter
+        if (q.field === 'budget') {
+          programs = programs.filter(p => {
+            if (opt.max && !opt.min) return p.fee <= opt.max;
+            if (opt.min && opt.max) return p.fee >= opt.min && p.fee <= opt.max;
+            if (opt.min && !opt.max) return p.fee >= opt.min;
+            return true;
+          });
+        }
+        // mode filter
+        if (q.field === 'mode' && val !== 'any') {
+          programs = programs.filter(p => p.mode === val);
+        }
+      });
 
-          if (q.field === 'education') {
-            if (val === '12th') filtered = filtered.filter(p => p.level === 'Undergraduate' || p.level === 'UG');
-            else if (val === 'graduate' || val === 'working') filtered = filtered.filter(p => ['Postgraduate', 'PG', 'Undergraduate', 'UG'].includes(p.level));
-          }
-          if (opt.categories?.length) {
-            filtered = filtered.filter(p =>
-              opt.categories.some(cat =>
-                p.category?.toLowerCase().includes(cat.toLowerCase()) ||
-                p.name?.toLowerCase().includes(cat.toLowerCase())
-              )
-            );
-          }
-          if (q.field === 'budget') {
-            filtered = filtered.filter(p => {
-              if (opt.max && !opt.min) return p.fee <= opt.max;
-              if (opt.min && opt.max) return p.fee >= opt.min && p.fee <= opt.max;
-              if (opt.min && !opt.max) return p.fee >= opt.min;
-              return true;
-            });
-          }
-          if (q.field === 'mode' && val !== 'any') {
-            filtered = filtered.filter(p => p.mode === val);
-          }
-        });
-
-        return filtered;
-      };
-
-      // Try full match first
-      let matched = applyFilters();
-
-      // If no results, relax filters one by one (budget → mode → education)
-      const relaxOrder = ['budget', 'mode', 'education', 'interest'];
-      const skipped = [];
-      let isSuggestion = false;
-
-      while (matched.length === 0 && skipped.length < relaxOrder.length) {
-        skipped.push(relaxOrder[skipped.length]);
-        matched = applyFilters(skipped);
-        isSuggestion = true;
-      }
-
-      // Last resort: just return featured/top programs
-      if (matched.length === 0) {
-        matched = [...allPrograms];
-        isSuggestion = true;
-      }
-
-      matched.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-      setResults(matched.slice(0, 6));
-      setIsSuggestion(isSuggestion);
+      programs.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+      setResults(programs.slice(0, 6));
       setShowResults(true);
     } catch (err) {
       console.error(err);
@@ -302,22 +275,19 @@ export default function CourseFinder() {
             {gateCleared && showResults && (
               <>
                 <div className="cf-results-header">
-                  <div className={`cf-results-icon ${isSuggestion ? 'suggestion' : ''}`}>
-                  <i className={`fa-solid ${isSuggestion ? 'fa-lightbulb' : 'fa-sparkles'}`}></i>
-                </div>
+                  <div className="cf-results-icon"><i className="fa-solid fa-sparkles"></i></div>
                   <h2 className="cf-results-title">
-                    {isSuggestion ? 'You Might Also Like These!' : 'Recommended Courses For You!'}
+                    {results.length > 0 ? 'Recommended Courses For You!' : 'No Exact Matches Found'}
                   </h2>
                   <p className="cf-results-subtitle">
-                    {isSuggestion
-                      ? `No exact match found — here are ${results.length} similar programs you may like`
-                      : `We found ${results.length} courses matching your preferences`
-                    }
+                    {results.length > 0
+                      ? `We found ${results.length} courses matching your preferences`
+                      : 'Try adjusting your preferences'}
                   </p>
                 </div>
 
                 <div className="cf-results-list">
-                  {results.map(program => (
+                  {results.length > 0 ? results.map(program => (
                     <Link key={program._id} href={`/programs/${program.slug}`}
                       className="cf-result-card" onClick={() => setIsOpen(false)}>
                       <div className="cf-result-info">
@@ -336,7 +306,15 @@ export default function CourseFinder() {
                         <span className="cf-price-value">₹{Number(program.fee).toLocaleString('en-IN')}</span>
                       </div>
                     </Link>
-                  ))}
+                  )) : (
+                    <div className="cf-no-results">
+                      <i className="fa-solid fa-face-sad-tear cf-no-results-icon"></i>
+                      <p>No programs match your exact criteria.</p>
+                      <Link href="/programs" className="cf-browse-all-btn" onClick={() => setIsOpen(false)}>
+                        Browse All Programs
+                      </Link>
+                    </div>
+                  )}
                 </div>
 
                 <div className="cf-results-actions">
@@ -517,9 +495,6 @@ const CF_STYLES = `
     background: linear-gradient(135deg, #10B981, #34D399);
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 20px; font-size: 1.8rem; color: #fff;
-  }
-  .cf-results-icon.suggestion {
-    background: linear-gradient(135deg, #6366F1, #818CF8);
   }
   .cf-results-title { color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0 0 10px; }
   .cf-results-subtitle { color: #94A3B8; font-size: 0.95rem; margin: 0; }

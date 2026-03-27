@@ -10,7 +10,9 @@ export async function GET() {
         if (!seo) {
             seo = await SEO.create({});
         }
-        return NextResponse.json(seo);
+        return NextResponse.json(seo, {
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' }
+        });
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }

@@ -15,7 +15,9 @@ export async function GET() {
             .limit(8)
             .lean();
 
-        return NextResponse.json(programs);
+        return NextResponse.json(programs, {
+            headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600' }
+        });
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });
     }

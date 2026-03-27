@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Edufolio - Find Your Perfect Program",
   description: "Browse top universities and programs with Edufolio.",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -32,6 +37,15 @@ export default function RootLayout({ children }) {
         <Providers>
           {children}
         </Providers>
+        <script dangerouslySetInnerHTML={{ __html: `
+          document.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+              e.target.onerror = null;
+              e.target.src = 'https://placehold.co/400x300?text=Image';
+              e.target.style.objectFit = 'contain';
+            }
+          }, true);
+        `}} />
       </body>
     </html>
   );
