@@ -109,7 +109,7 @@ const UniversityDetail = () => {
                         <div className="ud-hero-info">
                             <div className="ud-logo-wrapper">
                                 <img
-                                    src={university.logo || 'https://via.placeholder.com/100'}
+                                    src={university.logo || 'https://placehold.co/100'}
                                     alt={`${university.name} logo`}
                                     className="ud-hero-logo"
                                 />

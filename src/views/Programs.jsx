@@ -1675,11 +1675,11 @@ const Programs = () => {
                                             <div className="university-row">
                                                 <div className="university-logo">
                                                     <img
-                                                        src={program.universityId?.logo || 'https://via.placeholder.com/40x40?text=U'}
+                                                        src={program.universityId?.logo || 'https://placehold.co/40x40?text=U'}
                                                         alt={program.universityId?.name}
                                                         className="uni-logo-img"
                                                         onError={(e) => {
-                                                            e.target.src = 'https://via.placeholder.com/40x40?text=U';
+                                                            e.target.src = 'https://placehold.co/40x40?text=U';
                                                         }}
                                                     />
                                                 </div>

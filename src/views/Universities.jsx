@@ -1523,11 +1523,11 @@ const Universities = () => {
                                             <div className="card-content">
                                                 <div className="logo-wrapper">
                                                     <img
-                                                        src={university.logo || 'https://via.placeholder.com/70x70?text=Logo'}
+                                                        src={university.logo || 'https://placehold.co/70x70?text=Logo'}
                                                         alt={university.name}
                                                         className="logo"
                                                         onError={(e) => {
-                                                            e.target.src = 'https://via.placeholder.com/70x70?text=Logo';
+                                                            e.target.src = 'https://placehold.co/70x70?text=Logo';
                                                         }}
                                                     />
                                                 </div>

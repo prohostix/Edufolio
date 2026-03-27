@@ -686,10 +686,10 @@ const Dashboard = () => {
                                                 <td style={styles.td}>
                                                     <div style={styles.uniCell}>
                                                         <img
-                                                            src={uni.logo || 'https://via.placeholder.com/40?text=U'}
+                                                            src={uni.logo || 'https://placehold.co/40?text=U'}
                                                             alt={uni.name}
                                                             style={styles.uniLogo}
-                                                            onError={(e) => e.target.src = 'https://via.placeholder.com/40?text=U'}
+                                                            onError={(e) => e.target.src = 'https://placehold.co/40?text=U'}
                                                         />
                                                         <div>
                                                             <span style={styles.uniName}>{uni.name}</span>
