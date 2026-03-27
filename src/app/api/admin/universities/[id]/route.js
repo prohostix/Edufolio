@@ -5,6 +5,27 @@ import University from '@/models/University';
 import Program from '@/models/Program';
 import connectDB from '@/lib/db';
 
+export const GET = withAuth(async (req, { params }) => {
+    try {
+        await connectDB();
+        const { id } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Invalid University ID' }, { status: 400 });
+        }
+
+        const university = await University.findById(id);
+
+        if (!university) {
+            return NextResponse.json({ message: 'University not found' }, { status: 404 });
+        }
+
+        return NextResponse.json(university);
+    } catch (error) {
+        return NextResponse.json({ message: error.message }, { status: 500 });
+    }
+});
+
 export const PUT = withAuth(async (req, { params }) => {
     try {
         await connectDB();

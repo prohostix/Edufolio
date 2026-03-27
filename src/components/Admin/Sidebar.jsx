@@ -11,7 +11,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         { id: 'overview', icon: 'fa-chart-pie', label: 'Overview' },
         { id: 'unis', icon: 'fa-building-columns', label: 'Universities' },
         { id: 'programs', icon: 'fa-graduation-cap', label: 'Programs' },
-        { id: 'enquiries', icon: 'fa-envelope', label: 'Enquiries' }
+        { id: 'enquiries', icon: 'fa-envelope', label: 'Enquiries' },
+        { id: 'coursefinder', icon: 'fa-wand-magic-sparkles', label: 'Course Finder' }
     ];
 
     return (

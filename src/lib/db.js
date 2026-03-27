@@ -16,7 +16,9 @@ if (!cached) {
 import '@/models/Admin';
 import '@/models/University';
 import '@/models/Program';
-import '@/models/Enquiry';
+import Enquiry from '@/models/Enquiry';
+import CourseFinderQuestion from '@/models/CourseFinderQuestion';
+
 
 async function connectDB() {
   if (cached.conn) return cached.conn;
@@ -28,6 +30,8 @@ async function connectDB() {
       minPoolSize: 2,
     }).then(m => {
       console.log('✅ MongoDB connected');
+      Enquiry.init();
+      CourseFinderQuestion.init();
       return m;
     }).catch(e => {
       cached.promise = null;
