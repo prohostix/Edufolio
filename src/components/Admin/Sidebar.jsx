@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import logoBlack from '@/assets/images/edufolio-logo-black.png';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const pathname = usePathname();
@@ -17,12 +18,15 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         <div style={styles.sidebar}>
             {/* Logo */}
             <div style={styles.logo}>
-                <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <h2 style={{ margin: 0, color: '#FF6B35' }}>
-                        <i className="fa-solid fa-graduation-cap" style={{ marginRight: '10px' }}></i>
-                        EduFolio
-                    </h2>
-                    <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Admin Panel</span>
+                <Link href="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <img 
+                        src={logoBlack.src} 
+                        alt="EduFolio" 
+                        style={{ height: '40px', width: 'auto', marginBottom: '5px' }} 
+                    />
+                    <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: '500', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                        Admin Panel
+                    </span>
                 </Link>
             </div>
 

@@ -13,8 +13,8 @@ export const GET = withAuth(async (req, { admin }) => {
             totalPrograms,
             totalEnquiries,
             newEnquiries,
-            recentEnquiries,
-            enquiriesByStatus
+            recentEnquiriesResult,
+            enquiriesByStatusResult
         ] = await Promise.all([
             University.countDocuments(),
             Program.countDocuments(),
@@ -31,17 +31,27 @@ export const GET = withAuth(async (req, { admin }) => {
             ])
         ]);
 
+        const recentEnquiries = recentEnquiriesResult || [];
+        const enquiriesByStatus = enquiriesByStatusResult || [];
+
         return NextResponse.json({
             stats: {
-                universities: totalUniversities,
-                programs: totalPrograms,
-                enquiries: totalEnquiries,
-                newEnquiries
+                universities: totalUniversities || 0,
+                programs: totalPrograms || 0,
+                enquiries: totalEnquiries || 0,
+                newEnquiries: newEnquiries || 0
             },
             enquiriesByStatus,
             recentEnquiries
         });
     } catch (error) {
-        return NextResponse.json({ message: error.message }, { status: 500 });
+        console.error('Stats API Error:', error);
+        return NextResponse.json({ 
+            message: 'Error fetching stats', 
+            error: error.message,
+            stats: { universities: 0, programs: 0, enquiries: 0, newEnquiries: 0 },
+            enquiriesByStatus: [],
+            recentEnquiries: []
+        }, { status: 500 });
     }
 });

@@ -79,7 +79,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Hide broken images gracefully */
 img {
-  background: #f1f5f9;
+  display: block;
 }
 img[src=""], img:not([src]) {
   visibility: hidden;

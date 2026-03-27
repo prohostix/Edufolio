@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 // Import logo images with correct file names
-import logoWhite from '../assets/images/edufolio-logo-white.png.png';
-import logoBlack from '../assets/images/edufolio-logo-black.png.png';
+import logoWhite from '../assets/images/edufolio-logo-white.png';
+import logoBlack from '../assets/images/edufolio-logo-black.png';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
