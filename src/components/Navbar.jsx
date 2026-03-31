@@ -104,6 +104,7 @@ const Navbar = () => {
                     --nav-white: #FFFFFF;
                     --nav-light-gray: #F5F7FA;
                     --nav-gray: #64748B;
+                    --nav-orange: #FF6B35;
                     --nav-text-dark: #2D1B4E;
                     --nav-transition: 0.3s ease;
                     --nav-radius: 10px;
@@ -168,12 +169,11 @@ const Navbar = () => {
                 /* ==================== NAV LINKS ==================== */
                 .nav-links {
                     display: flex !important;
-                    gap: 8px !important;
+                    gap: 12px !important;
                     align-items: center !important;
-                    position: absolute !important;
-                    left: 50% !important;
-                    top: 50% !important;
-                    transform: translate(-50%, -50%) !important;
+                    flex: 1 !important;
+                    justify-content: center !important;
+                    margin: 0 40px !important;
                 }
 
                 .nav-link {
@@ -198,6 +198,17 @@ const Navbar = () => {
                     opacity: 0.85 !important;
                 }
 
+                .new-badge {
+                    font-size: 0.6rem !important;
+                    background: #FF6B35 !important;
+                    color: #fff !important;
+                    padding: 1px 4px !important;
+                    border-radius: 4px !important;
+                    font-weight: 800 !important;
+                    margin-left: -2px !important;
+                    margin-top: -12px !important;
+                }
+
                 .navbar.scrolled .nav-link {
                     color: var(--nav-text-dark) !important;
                     text-shadow: none !important;
@@ -220,6 +231,26 @@ const Navbar = () => {
 
                 .nav-link.active .nav-icon {
                     opacity: 1 !important;
+                }
+
+                /* Highlight for Course Finder */
+                .nav-link.highlight {
+                    background: rgba(255, 107, 53, 0.1) !important;
+                    color: #FF6B35 !important;
+                    border: 1px solid rgba(255, 107, 53, 0.2) !important;
+                }
+                .navbar.scrolled .nav-link.highlight {
+                    background: rgba(255, 107, 53, 0.08) !important;
+                    border: 1px solid rgba(255, 107, 53, 0.1) !important;
+                }
+                .nav-link.highlight:hover {
+                    background: rgba(255, 107, 53, 0.15) !important;
+                    transform: translateY(-1px) !important;
+                }
+                .nav-link.highlight.active {
+                    background: linear-gradient(135deg, #FF6B35 0%, #FF8B5C 100%) !important;
+                    color: #fff !important;
+                    border: none !important;
                 }
 
                 /* ==================== CTA CONTAINER ==================== */
@@ -581,24 +612,24 @@ const Navbar = () => {
                     }
                 }
 
-                @media screen and (max-width: 768px) {
+                @media screen and (max-width: 1024px) {
                     .navbar {
                         --nav-height: 65px !important;
                     }
-
+                
                     .nav-links,
                     .cta-container {
                         display: none !important;
                     }
-
+                
                     .mobile-menu-btn {
                         display: flex !important;
                     }
-
+                
                     .navbar-logo-img {
                         height: 38px !important;
                     }
-
+                
                     .mobile-menu {
                         top: 65px !important;
                     }
@@ -707,11 +738,12 @@ const Navbar = () => {
                             <a
                                 key={link.path}
                                 href={link.path}
-                                className={`nav-link ${isActive(link.path) ? 'active' : ''}`}
+                                className={`nav-link ${isActive(link.path) ? 'active' : ''} ${link.path === '/find-my-course' ? 'highlight' : ''}`}
                                 onClick={(e) => handleNavClick(e, link.path)}
                             >
                                 <i className={`fa-solid ${link.icon} nav-icon`}></i>
                                 <span className="nav-text">{link.name}</span>
+                                {link.path === '/find-my-course' && <span className="new-badge">NEW</span>}
                             </a>
                         ))}
                     </div>
