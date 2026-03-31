@@ -5,6 +5,21 @@ import Footer from '../../components/Footer';
 import CourseFinder from '../../components/CourseFinder';
 
 export default function FindMyCoursePage() {
+    React.useEffect(() => {
+        // Force body to be scrollable when this page mounts
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+        document.documentElement.style.overflow = 'auto';
+        document.documentElement.style.height = 'auto';
+        
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.height = '';
+        };
+    }, []);
+
     return (
         <div className="course-finder-page">
             <style>{`
@@ -28,7 +43,6 @@ export default function FindMyCoursePage() {
                     display: flex;
                     flex-direction: column;
                     position: relative;
-                    overflow-x: hidden;
                 }
 
                 .hero-pattern {
