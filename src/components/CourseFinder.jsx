@@ -376,8 +376,8 @@ const CF_STYLES = `
   .cf-floating-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 40px rgba(255,107,53,0.5); animation: none; }
   @keyframes cf-float-pulse { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
   
-  .cf-standalone-container { width: 100%; max-width: 800px; margin: 40px auto; padding: 0 20px; animation: cf-fade-in 0.3s ease; }
-  .cf-standalone-content { background: #fff; border-radius: 24px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid #E2E8F0; overflow: hidden; }
+  .cf-standalone-container { width: 100%; max-width: 800px; margin: 0 auto; padding: 0 20px; animation: cf-fade-in 0.3s ease; }
+  .cf-standalone-content { background: #fff; border-radius: 24px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
 
   .cf-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.7);
