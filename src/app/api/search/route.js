@@ -14,22 +14,23 @@ export async function GET(req) {
             return NextResponse.json({ universities: [], programs: [] });
         }
 
-        const universities = await University.find({
-            isActive: true,
-            $text: { $search: q }
-        })
-            .select('name slug logo location')
-            .limit(parseInt(limit, 10))
-            .lean();
-
-        const programs = await Program.find({
-            isActive: true,
-            $text: { $search: q }
-        })
-            .populate('universityId', 'name slug')
-            .select('name slug category level fee')
-            .limit(parseInt(limit, 10))
-            .lean();
+        const [universities, programs] = await Promise.all([
+            University.find({
+                isActive: true,
+                $text: { $search: q }
+            })
+                .select('name slug logo location')
+                .limit(parseInt(limit, 10))
+                .lean(),
+            Program.find({
+                isActive: true,
+                $text: { $search: q }
+            })
+                .populate('universityId', 'name slug')
+                .select('name slug category level fee')
+                .limit(parseInt(limit, 10))
+                .lean()
+        ]);
 
         // If no text results, fallback to exact name matches (optional but good for short strings)
         if (universities.length === 0 && programs.length === 0) {

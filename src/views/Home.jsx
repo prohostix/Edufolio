@@ -1775,9 +1775,13 @@ const Home = () => {
                                     <i className="fa-solid fa-graduation-cap"></i>
                                     <span>Explore Programs</span>
                                 </Link>
+                                <Link href="/find-my-course" className="secondary-btn" style={{ background: 'rgba(255, 107, 53, 0.2)', borderColor: '#FF6B35' }}>
+                                    <i className="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>Find My Course</span>
+                                </Link>
                                 <Link href="/universities" className="secondary-btn">
                                     <i className="fa-solid fa-building-columns"></i>
-                                    <span>View Universities</span>
+                                    <span>Universities</span>
                                 </Link>
                             </div>
 

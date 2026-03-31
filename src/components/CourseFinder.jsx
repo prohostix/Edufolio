@@ -66,8 +66,8 @@ function EnquiryGate({ onSuccess }) {
 }
 
 // ─── Main CourseFinder ───────────────────────────────────────────────────────
-export default function CourseFinder() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CourseFinder({ standalone = false }) {
+  const [isOpen, setIsOpen] = useState(standalone);
   const [gateCleared, setGateCleared] = useState(false);
   const [userName, setUserName] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -218,19 +218,23 @@ export default function CourseFinder() {
     <>
       <style>{CF_STYLES}</style>
 
-      {/* Floating button */}
-      <button className="cf-floating-btn" onClick={() => setIsOpen(true)} aria-label="Find my course">
-        <i className="fa-solid fa-wand-magic-sparkles"></i>
-        <span>Find My Course</span>
-      </button>
+      {/* Floating button - only show if NOT standalone */}
+      {!standalone && (
+        <button className="cf-floating-btn" onClick={() => setIsOpen(true)} aria-label="Find my course">
+          <i className="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Find My Course</span>
+        </button>
+      )}
 
-      {/* Modal */}
+      {/* Modal / Standalone Logic */}
       {isOpen && (
-        <div className="cf-overlay" onClick={closeModal} role="dialog" aria-modal="true">
-          <div className="cf-modal" onClick={e => e.stopPropagation()}>
-            <button className="cf-close-btn" onClick={closeModal} aria-label="Close">
-              <i className="fa-solid fa-times"></i>
-            </button>
+        <div className={standalone ? "cf-standalone-container" : "cf-overlay"} onClick={!standalone ? closeModal : undefined} role="dialog" aria-modal={!standalone}>
+          <div className={standalone ? "cf-standalone-content" : "cf-modal"} onClick={e => e.stopPropagation()}>
+            {!standalone && (
+              <button className="cf-close-btn" onClick={closeModal} aria-label="Close">
+                <i className="fa-solid fa-times"></i>
+              </button>
+            )}
 
             {/* Step 1: Enquiry gate */}
             {!gateCleared && <EnquiryGate onSuccess={handleGateSuccess} />}
@@ -371,6 +375,9 @@ const CF_STYLES = `
   }
   .cf-floating-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 40px rgba(255,107,53,0.5); animation: none; }
   @keyframes cf-float-pulse { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+  
+  .cf-standalone-container { width: 100%; max-width: 800px; margin: 40px auto; padding: 0 20px; animation: cf-fade-in 0.3s ease; }
+  .cf-standalone-content { background: #fff; border-radius: 24px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid #E2E8F0; overflow: hidden; }
 
   .cf-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.7);

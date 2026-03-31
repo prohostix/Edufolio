@@ -13,9 +13,9 @@ if (!cached) {
 }
 
 // Import models to ensure they are registered correctly for population
-import '@/models/Admin';
-import '@/models/University';
-import '@/models/Program';
+import Admin from '@/models/Admin';
+import University from '@/models/University';
+import Program from '@/models/Program';
 import Enquiry from '@/models/Enquiry';
 import CourseFinderQuestion from '@/models/CourseFinderQuestion';
 
@@ -26,12 +26,21 @@ async function connectDB() {
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-      maxPoolSize: 10,
-      minPoolSize: 2,
-    }).then(m => {
+      maxPoolSize: 25,
+      minPoolSize: 5,
+      connectTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+    }).then(async (m) => {
       console.log('✅ MongoDB connected');
-      Enquiry.init();
-      CourseFinderQuestion.init();
+      // Ensure all model indexes are strictly built and verified at startup
+      await Promise.all([
+        Admin.init(),
+        University.init(),
+        Program.init(),
+        Enquiry.init(),
+        CourseFinderQuestion.init()
+      ]);
+      console.log('🚀 All DB models initialized and indexed');
       return m;
     }).catch(e => {
       cached.promise = null;

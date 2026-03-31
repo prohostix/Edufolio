@@ -56,6 +56,7 @@ const Navbar = () => {
         { name: 'Home', path: '/', icon: 'fa-home' },
         { name: 'Programs', path: '/programs', icon: 'fa-graduation-cap' },
         { name: 'Universities', path: '/universities', icon: 'fa-building-columns' },
+        { name: 'Course Finder', path: '/find-my-course', icon: 'fa-wand-magic-sparkles' },
         { name: 'About', path: '/about', icon: 'fa-info-circle' },
         { name: 'Contact', path: '/contact', icon: 'fa-envelope' }
     ];
