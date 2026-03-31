@@ -12,6 +12,9 @@ export default function FindMyCoursePage() {
         document.documentElement.style.overflow = 'auto';
         document.documentElement.style.height = 'auto';
         
+        // Remove platform scroll lock if present
+        document.body.classList.remove('antigravity-scroll-lock');
+        
         return () => {
             document.body.style.overflow = '';
             document.body.style.height = '';
