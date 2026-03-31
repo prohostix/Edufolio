@@ -28,7 +28,7 @@ export default function FindMyCoursePage() {
                     display: flex;
                     flex-direction: column;
                     position: relative;
-                    overflow: hidden;
+                    overflow-x: hidden;
                 }
 
                 .hero-pattern {

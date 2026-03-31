@@ -169,11 +169,11 @@ const Navbar = () => {
                 /* ==================== NAV LINKS ==================== */
                 .nav-links {
                     display: flex !important;
-                    gap: 12px !important;
+                    gap: 10px !important;
                     align-items: center !important;
                     flex: 1 !important;
                     justify-content: center !important;
-                    margin: 0 40px !important;
+                    margin: 0 20px !important;
                 }
 
                 .nav-link {
@@ -199,14 +199,18 @@ const Navbar = () => {
                 }
 
                 .new-badge {
-                    font-size: 0.6rem !important;
+                    position: absolute !important;
+                    top: -2px !important;
+                    right: 4px !important;
+                    font-size: 0.55rem !important;
                     background: #FF6B35 !important;
                     color: #fff !important;
-                    padding: 1px 4px !important;
+                    padding: 1px 3px !important;
                     border-radius: 4px !important;
                     font-weight: 800 !important;
-                    margin-left: -2px !important;
-                    margin-top: -12px !important;
+                    line-height: 1 !important;
+                    z-index: 1 !important;
+                    pointer-events: none !important;
                 }
 
                 .navbar.scrolled .nav-link {
@@ -612,7 +616,7 @@ const Navbar = () => {
                     }
                 }
 
-                @media screen and (max-width: 1024px) {
+                @media screen and (max-width: 1150px) {
                     .navbar {
                         --nav-height: 65px !important;
                     }
