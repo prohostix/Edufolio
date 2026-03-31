@@ -18,6 +18,7 @@ import University from '@/models/University';
 import Program from '@/models/Program';
 import Enquiry from '@/models/Enquiry';
 import CourseFinderQuestion from '@/models/CourseFinderQuestion';
+import SEO from '@/models/seoModel';
 
 
 async function connectDB() {
@@ -38,7 +39,8 @@ async function connectDB() {
         University.init(),
         Program.init(),
         Enquiry.init(),
-        CourseFinderQuestion.init()
+        CourseFinderQuestion.init(),
+        SEO.init()
       ]);
       console.log('🚀 All DB models initialized and indexed');
       return m;

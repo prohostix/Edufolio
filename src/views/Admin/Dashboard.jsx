@@ -117,14 +117,31 @@ const Dashboard = () => {
 
     // Confirm delete
     const confirmDelete = async () => {
+        const { type, id } = deleteModal;
         setDeleting(true);
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.delete(`${API_BASE}/admin/${deleteModal.type}/${deleteModal.id}`, {
+            await axios.delete(`${API_BASE}/admin/${type}/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            showToast(`${deleteModal.type.slice(0, -1)} deleted successfully`, 'success');
-            fetchData(token);
+            showToast(`${type.slice(0, -1)} deleted successfully`, 'success');
+            
+            // Update local state without full refetch
+            if (type === 'universities') {
+                setUniversities(prev => prev.filter(u => u._id !== id));
+                setStats(prev => ({ ...prev, universities: Math.max(0, prev.universities - 1) }));
+            } else if (type === 'programs') {
+                setPrograms(prev => prev.filter(p => p._id !== id));
+                setStats(prev => ({ ...prev, programs: Math.max(0, prev.programs - 1) }));
+            } else if (type === 'enquiries') {
+                const deletedEnq = enquiries.find(e => e._id === id);
+                setEnquiries(prev => prev.filter(e => e._id !== id));
+                setStats(prev => ({ 
+                    ...prev, 
+                    enquiries: Math.max(0, prev.enquiries - 1),
+                    newEnquiries: deletedEnq?.status === 'New' ? Math.max(0, prev.newEnquiries - 1) : prev.newEnquiries
+                }));
+            }
         } catch (err) {
             console.error('Delete error:', err);
             showToast('Failed to delete item', 'error');
@@ -141,7 +158,13 @@ const Dashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             showToast(`Status updated to ${currentStatus ? 'Inactive' : 'Active'}`, 'success');
-            fetchData(token);
+            
+            // Update local state
+            if (type === 'universities') {
+                setUniversities(prev => prev.map(u => u._id === id ? { ...u, isActive: !u.isActive } : u));
+            } else if (type === 'programs') {
+                setPrograms(prev => prev.map(p => p._id === id ? { ...p, isActive: !p.isActive } : p));
+            }
         } catch (err) {
             console.error('Toggle error:', err);
             showToast('Failed to update status', 'error');
@@ -155,7 +178,13 @@ const Dashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             showToast(`${currentFeatured ? 'Removed from' : 'Added to'} featured`, 'success');
-            fetchData(token);
+            
+            // Update local state
+            if (type === 'universities') {
+                setUniversities(prev => prev.map(u => u._id === id ? { ...u, featured: !u.featured } : u));
+            } else if (type === 'programs') {
+                setPrograms(prev => prev.map(p => p._id === id ? { ...p, featured: !p.featured } : p));
+            }
         } catch (err) {
             console.error('Toggle featured error:', err);
             showToast('Failed to update featured status', 'error');
@@ -170,7 +199,18 @@ const Dashboard = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             showToast('Enquiry status updated', 'success');
-            fetchData(token);
+            
+            // Update local state
+            setEnquiries(prev => {
+                const oldEnq = prev.find(e => e._id === id);
+                // Update stats if status changed from/to 'New'
+                if (oldEnq?.status === 'New' && status !== 'New') {
+                    setStats(s => ({ ...s, newEnquiries: Math.max(0, s.newEnquiries - 1) }));
+                } else if (oldEnq?.status !== 'New' && status === 'New') {
+                    setStats(s => ({ ...s, newEnquiries: s.newEnquiries + 1 }));
+                }
+                return prev.map(e => e._id === id ? { ...e, status } : e);
+            });
         } catch (err) {
             console.error('Update status error:', err);
             showToast('Failed to update status', 'error');

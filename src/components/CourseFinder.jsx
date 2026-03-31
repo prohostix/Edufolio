@@ -18,11 +18,11 @@ function EnquiryGate({ onSuccess }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, source: 'Course Finder' }),
       });
+      const d = await res.json();
       if (!res.ok) {
-        const d = await res.json();
         throw new Error(d.message || 'Submission failed');
       }
-      onSuccess(form.name);
+      onSuccess(form.name, d.enquiry?.id);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -70,6 +70,7 @@ export default function CourseFinder({ standalone = false }) {
   const [isOpen, setIsOpen] = useState(standalone);
   const [gateCleared, setGateCleared] = useState(false);
   const [userName, setUserName] = useState('');
+  const [enquiryId, setEnquiryId] = useState('');
   const [questions, setQuestions] = useState([]);
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({});
@@ -109,6 +110,7 @@ export default function CourseFinder({ standalone = false }) {
   const reset = () => {
     setGateCleared(false);
     setUserName('');
+    setEnquiryId('');
     setStep(1);
     setAnswers({});
     setResults([]);
@@ -117,8 +119,9 @@ export default function CourseFinder({ standalone = false }) {
     setAnimate(true);
   };
 
-  const handleGateSuccess = (name) => {
+  const handleGateSuccess = (name, id) => {
     setUserName(name);
+    setEnquiryId(id);
     setGateCleared(true);
   };
 
@@ -208,6 +211,19 @@ export default function CourseFinder({ standalone = false }) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateEnquiryWithCourse = async (programId, universityId) => {
+    if (!enquiryId) return;
+    try {
+      await fetch(`/api/enquiry/${enquiryId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ programId, universityId }),
+      });
+    } catch (err) {
+      console.error('Failed to update enquiry with course:', err);
     }
   };
 
@@ -323,7 +339,10 @@ export default function CourseFinder({ standalone = false }) {
                 <div className="cf-results-list">
                   {results.map(program => (
                     <Link key={program._id} href={`/programs/${program.slug}`}
-                      className="cf-result-card" onClick={() => setIsOpen(false)}>
+                      className="cf-result-card" onClick={() => {
+                        updateEnquiryWithCourse(program._id, program.universityId?._id);
+                        setIsOpen(false);
+                      }}>
                       <div className="cf-result-info">
                         <h4 className="cf-result-name">{program.name}</h4>
                         <p className="cf-result-university">

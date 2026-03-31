@@ -1,2 +1,5 @@
 import ProgramDetail from '../../../views/ProgramDetail';
-export default function Page({ params }) { return <ProgramDetail slug={params.slug} />; }
+export default async function Page({ params }) { 
+    const { slug } = await params;
+    return <ProgramDetail slug={slug} />; 
+}
