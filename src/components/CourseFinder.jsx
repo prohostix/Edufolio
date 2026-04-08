@@ -57,7 +57,7 @@ function EnquiryGate({ onSuccess }) {
         <button type="submit" className="cf-submit-btn" disabled={loading}>
           {loading
             ? <><i className="fa-solid fa-spinner fa-spin"></i> Submitting...</>
-            : <><i className="fa-solid fa-arrow-right"></i> Continue to Quiz</>}
+            : <><i className="fa-solid fa-arrow-right"></i> Next Step</>}
         </button>
       </form>
       <p className="cf-privacy"><i className="fa-solid fa-lock"></i> Your info is secure with us</p>
@@ -94,9 +94,9 @@ export default function CourseFinder({ standalone = false }) {
     return () => document.removeEventListener('keydown', fn);
   }, [isOpen]);
 
-  // Load questions once gate is cleared
+  // Load questions when opened
   useEffect(() => {
-    if (!gateCleared || questions.length) return;
+    if (!isOpen || questions.length) return;
     setQuestionsLoading(true);
     fetch('/api/public/course-finder-questions')
       .then(r => r.json())
@@ -252,23 +252,23 @@ export default function CourseFinder({ standalone = false }) {
               </button>
             )}
 
-            {/* Step 1: Enquiry gate */}
-            {!gateCleared && <EnquiryGate onSuccess={handleGateSuccess} />}
+            {/* Registration after 2 questions */}
+            {!gateCleared && step > 2 && <EnquiryGate onSuccess={handleGateSuccess} />}
 
-            {/* Step 2: Questions loading */}
-            {gateCleared && questionsLoading && (
+            {/* Questions Loading */}
+            {((!gateCleared && step <= 2) || gateCleared) && questionsLoading && (
               <div className="cf-loading-screen">
                 <i className="fa-solid fa-spinner fa-spin"></i>
                 <p>Loading questions...</p>
               </div>
             )}
 
-            {/* Step 3: Quiz */}
-            {gateCleared && !questionsLoading && !showResults && questions.length > 0 && (
+            {/* Questions Flow */}
+            {((!gateCleared && step <= 2) || gateCleared) && !questionsLoading && !showResults && questions.length > 0 && (
               <>
                 <div className="cf-header">
                   <div className="cf-header-icon"><i className="fa-solid fa-compass"></i></div>
-                  <h2 className="cf-title">Hi {userName}! Let's find your course</h2>
+                  <h2 className="cf-title">{userName ? `Hi ${userName}!` : 'Hello!'} Let's find your course</h2>
                   <p className="cf-subtitle">Answer a few questions for personalised recommendations</p>
                 </div>
 
@@ -318,7 +318,7 @@ export default function CourseFinder({ standalone = false }) {
               </div>
             )}
 
-            {/* Step 4: Results */}
+            {/* Results */}
             {gateCleared && showResults && (
               <>
                 <div className="cf-results-header">

@@ -2153,7 +2153,7 @@ function CourseFinderQuestionsTab({ showToast, token }) {
                             Course Finder Questions
                         </h2>
                         <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
-                            Users must submit an enquiry before accessing the quiz. Manage questions and options below.
+                            Users will submit their details during the question flow. Manage questions and options below.
                         </p>
                     </div>
                     <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -2179,7 +2179,7 @@ function CourseFinderQuestionsTab({ showToast, token }) {
                 <div style={{ ...cfCard, textAlign: 'center', padding: '60px' }}>
                     <i className="fa-solid fa-circle-question" style={{ fontSize: '3rem', color: '#CBD5E1', display: 'block', marginBottom: '15px' }}></i>
                     <h3 style={{ color: '#334155', margin: '0 0 10px' }}>No questions yet</h3>
-                    <p style={{ color: '#64748B' }}>Click "Seed Defaults" to add the standard 5-question quiz, or add your own.</p>
+                    <p style={{ color: '#64748B' }}>Click "Seed Defaults" to add the standard 5-question set, or add your own.</p>
                 </div>
             ) : questions.map((q, idx) => (
                 <div key={q._id} style={{ ...cfCard, borderLeft: `4px solid ${q.isActive ? '#FF6B35' : '#CBD5E1'}` }}>
