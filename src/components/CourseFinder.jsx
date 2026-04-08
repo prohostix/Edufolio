@@ -156,8 +156,13 @@ export default function CourseFinder({ standalone = false }) {
           if (!opt) return;
 
           if (q.field === 'education') {
-            if (val === '12th') filtered = filtered.filter(p => p.level === 'Undergraduate' || p.level === 'UG');
-            else if (val === 'graduate' || val === 'working') filtered = filtered.filter(p => ['Postgraduate', 'PG', 'Undergraduate', 'UG'].includes(p.level));
+            if (val === '12th') {
+              filtered = filtered.filter(p => ['Undergraduate', 'UG', 'Diploma', 'Certificate'].includes(p.level));
+            } else if (val === 'graduate' || val === 'working') {
+              filtered = filtered.filter(p => ['Postgraduate', 'PG'].includes(p.level));
+            } else if (val === 'postgraduate') {
+              filtered = filtered.filter(p => ['Postgraduate', 'PG', 'Doctorate'].includes(p.level));
+            }
           }
           if (opt.categories?.length) {
             filtered = filtered.filter(p =>
