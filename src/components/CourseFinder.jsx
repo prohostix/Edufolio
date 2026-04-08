@@ -103,7 +103,7 @@ export default function CourseFinder({ standalone = false }) {
       .then(data => setQuestions(Array.isArray(data) ? data : []))
       .catch(() => setQuestions([]))
       .finally(() => setQuestionsLoading(false));
-  }, [gateCleared]);
+  }, [isOpen, gateCleared]);
 
   const closeModal = () => { setIsOpen(false); reset(); };
 
@@ -256,10 +256,19 @@ export default function CourseFinder({ standalone = false }) {
             {!gateCleared && step > 2 && <EnquiryGate onSuccess={handleGateSuccess} />}
 
             {/* Questions Loading */}
-            {((!gateCleared && step <= 2) || gateCleared) && questionsLoading && (
+            {((!gateCleared && step <= 2) || gateCleared) && (questionsLoading || (questions.length === 0 && !showResults)) && (
               <div className="cf-loading-screen">
-                <i className="fa-solid fa-spinner fa-spin"></i>
-                <p>Loading questions...</p>
+                {questionsLoading ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin"></i>
+                    <p>Loading questions...</p>
+                  </>
+                ) : questions.length === 0 && !showResults ? (
+                  <>
+                    <i className="fa-solid fa-circle-exclamation" style={{ color: '#FF6B35', fontSize: '2.5rem' }}></i>
+                    <p>No questions configured yet. Please ask an admin to set up the course finder questions.</p>
+                  </>
+                ) : null}
               </div>
             )}
 
@@ -310,13 +319,6 @@ export default function CourseFinder({ standalone = false }) {
               </>
             )}
 
-            {/* No questions configured */}
-            {gateCleared && !questionsLoading && !showResults && questions.length === 0 && (
-              <div className="cf-loading-screen">
-                <i className="fa-solid fa-circle-exclamation" style={{ color: '#FF6B35', fontSize: '2.5rem' }}></i>
-                <p>No questions configured yet. Please ask an admin to set up the course finder questions.</p>
-              </div>
-            )}
 
             {/* Results */}
             {gateCleared && showResults && (
@@ -409,6 +411,7 @@ const CF_STYLES = `
   .cf-modal {
     background: #fff; border-radius: 24px;
     max-width: 600px; width: 100%; max-height: 90vh; overflow: auto;
+    min-height: 300px;
     position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.25);
     animation: cf-slide-up 0.3s ease;
   }
@@ -469,7 +472,8 @@ const CF_STYLES = `
   /* Loading */
   .cf-loading-screen {
     padding: 60px 30px; text-align: center; color: #64748B;
-    display: flex; flex-direction: column; align-items: center; gap: 15px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+    min-height: 300px;
   }
   .cf-loading-screen i { font-size: 2.5rem; color: #FF6B35; }
 
