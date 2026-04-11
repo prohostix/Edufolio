@@ -7,7 +7,8 @@ const EnquiryForm = ({ programId, universityId, source = 'Website' }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        phone: ''
+        phone: '',
+        countryCode: '+91'
     });
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -34,15 +35,17 @@ const EnquiryForm = ({ programId, universityId, source = 'Website' }) => {
         setLoading(true);
 
         try {
-        await axios.post(`${API_BASE}/enquiry`, {
+            const fullPhone = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`;
+            await axios.post(`${API_BASE}/enquiry`, {
                 ...formData,
+                phone: fullPhone,
                 programId,
                 universityId,
                 source
             });
 
             setSuccess(true);
-            setFormData({ name: '', email: '', phone: '' });
+            setFormData({ name: '', email: '', phone: '', countryCode: '+91' });
 
             setTimeout(() => setSuccess(false), 5000);
         } catch (err) {
@@ -58,7 +61,7 @@ const EnquiryForm = ({ programId, universityId, source = 'Website' }) => {
 
     const handleReset = () => {
         setSuccess(false);
-        setFormData({ name: '', email: '', phone: '' });
+        setFormData({ name: '', email: '', phone: '', countryCode: '+91' });
     };
 
     return (
@@ -212,6 +215,44 @@ const EnquiryForm = ({ programId, universityId, source = 'Website' }) => {
                     font-size: 1rem;
                     transition: color var(--ef-transition-fast);
                     pointer-events: none;
+                    z-index: 2;
+                }
+
+                .ef-phone-wrapper {
+                    display: flex;
+                    gap: 0;
+                    position: relative;
+                }
+
+                .ef-cc-select {
+                    width: 100px;
+                    padding: 14px 10px 14px 40px;
+                    border: 2px solid var(--ef-gray-200);
+                    border-radius: var(--ef-radius) 0 0 var(--ef-radius);
+                    background: var(--ef-white);
+                    color: var(--ef-dark);
+                    font-size: 0.95rem;
+                    font-family: inherit;
+                    cursor: pointer;
+                    border-right: none;
+                    transition: border-color var(--ef-transition-fast);
+                    -webkit-appearance: none;
+                    appearance: none;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: right 8px center;
+                    background-size: 14px;
+                }
+
+                .ef-input-phone {
+                    border-radius: 0 var(--ef-radius) var(--ef-radius) 0 !important;
+                    padding-left: 15px !important;
+                }
+
+                .ef-cc-select:focus, .ef-input-phone:focus {
+                    border-color: var(--ef-primary);
+                    outline: none;
+                    z-index: 3;
                 }
 
                 .ef-field.focused .ef-field-icon {
@@ -607,22 +648,44 @@ const EnquiryForm = ({ programId, universityId, source = 'Website' }) => {
 
                         <div className={`ef-field ${focusedField === 'phone' ? 'focused' : ''}`}>
                             <i className="fa-solid fa-phone ef-field-icon" aria-hidden="true"></i>
-                            <input
-                                type="tel"
-                                name="phone"
-                                id="ef-phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                onFocus={() => setFocusedField('phone')}
-                                onBlur={() => setFocusedField(null)}
-                                placeholder="Phone Number"
-                                className="ef-input"
-                                required
-                                autoComplete="tel"
-                                aria-label="Phone Number"
-                                pattern="[0-9]{10}"
-                                title="Please enter a 10-digit phone number"
-                            />
+                            <div className="ef-phone-wrapper">
+                                <select 
+                                    className="ef-cc-select"
+                                    name="countryCode"
+                                    value={formData.countryCode}
+                                    onChange={handleChange}
+                                    aria-label="Country Code"
+                                >
+                                    <option value="+91">+91 (IN)</option>
+                                    <option value="+1">+1 (US/CA)</option>
+                                    <option value="+44">+44 (UK)</option>
+                                    <option value="+61">+61 (AU)</option>
+                                    <option value="+971">+971 (UAE)</option>
+                                    <option value="+65">+65 (SG)</option>
+                                    <option value="+49">+49 (DE)</option>
+                                    <option value="+33">+33 (FR)</option>
+                                    <option value="+81">+81 (JP)</option>
+                                    <option value="+966">+966 (SA)</option>
+                                    <option value="+974">+974 (QA)</option>
+                                    <option value="+965">+965 (KW)</option>
+                                    <option value="+234">+234 (NG)</option>
+                                    <option value="+254">+254 (KE)</option>
+                                </select>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    id="ef-phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    onFocus={() => setFocusedField('phone')}
+                                    onBlur={() => setFocusedField(null)}
+                                    placeholder="Phone Number"
+                                    className="ef-input ef-input-phone"
+                                    required
+                                    autoComplete="tel"
+                                    aria-label="Phone Number"
+                                />
+                            </div>
                         </div>
 
                         <button

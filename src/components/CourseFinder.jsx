@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 // ─── Enquiry Gate ────────────────────────────────────────────────────────────
 function EnquiryGate({ onSuccess }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', countryCode: '+91' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -13,10 +13,11 @@ function EnquiryGate({ onSuccess }) {
     setError('');
     setLoading(true);
     try {
+      const fullPhone = `${form.countryCode}${form.phone.replace(/\D/g, '')}`;
       const res = await fetch('/api/enquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'Course Finder' }),
+        body: JSON.stringify({ ...form, phone: fullPhone, source: 'Course Finder' }),
       });
       const d = await res.json();
       if (!res.ok) {
@@ -49,10 +50,29 @@ function EnquiryGate({ onSuccess }) {
           <input className="cf-input" type="email" placeholder="Email Address" required
             value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
         </div>
-        <div className="cf-field">
+        <div className="cf-field cf-phone-container">
           <i className="fa-solid fa-phone cf-field-icon"></i>
-          <input className="cf-input" type="tel" placeholder="Phone Number" required
-            value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+          <div className="cf-phone-input-wrap">
+            <select className="cf-cc-select" value={form.countryCode} 
+              onChange={e => setForm({ ...form, countryCode: e.target.value })}>
+              <option value="+91">+91 (IN)</option>
+              <option value="+1">+1 (US/CA)</option>
+              <option value="+44">+44 (UK)</option>
+              <option value="+61">+61 (AU)</option>
+              <option value="+971">+971 (UAE)</option>
+              <option value="+65">+65 (SG)</option>
+              <option value="+49">+49 (DE)</option>
+              <option value="+33">+33 (FR)</option>
+              <option value="+81">+81 (JP)</option>
+              <option value="+966">+966 (SA)</option>
+              <option value="+974">+974 (QA)</option>
+              <option value="+965">+965 (KW)</option>
+              <option value="+234">+234 (NG)</option>
+              <option value="+254">+254 (KE)</option>
+            </select>
+            <input className="cf-input cf-input-phone" type="tel" placeholder="Phone Number" required
+              value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+          </div>
         </div>
         <button type="submit" className="cf-submit-btn" disabled={loading}>
           {loading
@@ -448,7 +468,17 @@ const CF_STYLES = `
   .cf-gate-sub { color: #94A3B8; font-size: 1rem; margin: 0 0 30px; }
   .cf-gate-form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
   .cf-field { position: relative; }
-  .cf-field-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 1rem; pointer-events: none; }
+  .cf-field-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 1rem; pointer-events: none; z-index: 2; }
+  .cf-phone-input-wrap { display: flex; gap: 0; position: relative; }
+  .cf-cc-select {
+    width: 100px; padding: 14px 10px 14px 40px; border-radius: 10px 0 0 10px; border: 2px solid #334155; 
+    background: #1E293B; color: #fff; font-size: 0.95rem; font-family: inherit; cursor: pointer;
+    border-right: none; transition: border-color 0.2s; -webkit-appearance: none; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 8px center; background-size: 16px;
+  }
+  .cf-input-phone { border-radius: 0 10px 10px 0 !important; padding-left: 15px !important; }
+  .cf-cc-select:focus, .cf-input-phone:focus { border-color: #FF6B35; outline: none; z-index: 3; }
   .cf-input {
     width: 100%; padding: 14px 16px 14px 44px;
     border-radius: 10px; border: 2px solid #334155;

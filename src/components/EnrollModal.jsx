@@ -8,6 +8,7 @@ const EnrollModal = ({ isOpen, onClose, program, university }) => {
         name: '',
         email: '',
         phone: '',
+        countryCode: '+91',
         education: '',
         experience: '',
         message: ''
@@ -52,8 +53,10 @@ const EnrollModal = ({ isOpen, onClose, program, university }) => {
         setError('');
 
         try {
+            const fullPhone = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`;
             await axios.post(`${API_BASE}/enquiry`, {
                 ...formData,
+                phone: fullPhone,
                 programId: program?._id,
                 universityId: university?._id || program?.universityId?._id,
                 source: 'Enrollment Form',
@@ -74,6 +77,7 @@ Additional Message: ${formData.message}
                     name: '',
                     email: '',
                     phone: '',
+                    countryCode: '+91',
                     education: '',
                     experience: '',
                     message: ''
@@ -342,6 +346,36 @@ Additional Message: ${formData.message}
                     outline: none;
                     border-color: var(--enroll-primary);
                     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+                    z-index: 2;
+                }
+
+                .enroll-phone-wrapper {
+                    display: flex;
+                    gap: 0;
+                    position: relative;
+                }
+
+                .enroll-cc-select {
+                    width: 90px;
+                    padding: 12px 10px 12px 15px;
+                    border: 2px solid var(--enroll-gray-200);
+                    border-radius: var(--enroll-radius) 0 0 var(--enroll-radius);
+                    background: var(--enroll-white);
+                    color: var(--enroll-dark);
+                    font-size: 0.95rem;
+                    font-family: inherit;
+                    cursor: pointer;
+                    border-right: none;
+                    transition: border-color var(--enroll-transition);
+                    -webkit-appearance: none;
+                    appearance: none;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: right 10px center;
+                }
+
+                .enroll-input-phone {
+                    border-radius: 0 var(--enroll-radius) var(--enroll-radius) 0 !important;
                 }
 
                 .enroll-modal-input::placeholder,
@@ -689,17 +723,41 @@ Additional Message: ${formData.message}
                                     <label htmlFor="enroll-phone" className="enroll-modal-label">
                                         Phone Number <span aria-hidden="true">*</span>
                                     </label>
-                                    <input
-                                        id="enroll-phone"
-                                        type="tel"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        placeholder="Enter your phone number"
-                                        className="enroll-modal-input"
-                                        required
-                                        aria-required="true"
-                                    />
+                                    <div className="enroll-phone-wrapper">
+                                        <select 
+                                            className="enroll-modal-select enroll-cc-select"
+                                            name="countryCode"
+                                            value={formData.countryCode}
+                                            onChange={handleChange}
+                                            aria-label="Country Code"
+                                        >
+                                            <option value="+91">+91 (IN)</option>
+                                            <option value="+1">+1 (US/CA)</option>
+                                            <option value="+44">+44 (UK)</option>
+                                            <option value="+61">+61 (AU)</option>
+                                            <option value="+971">+971 (UAE)</option>
+                                            <option value="+65">+65 (SG)</option>
+                                            <option value="+49">+49 (DE)</option>
+                                            <option value="+33">+33 (FR)</option>
+                                            <option value="+81">+81 (JP)</option>
+                                            <option value="+966">+966 (SA)</option>
+                                            <option value="+974">+974 (QA)</option>
+                                            <option value="+965">+965 (KW)</option>
+                                            <option value="+234">+234 (NG)</option>
+                                            <option value="+254">+254 (KE)</option>
+                                        </select>
+                                        <input
+                                            id="enroll-phone"
+                                            type="tel"
+                                            name="phone"
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                            placeholder="Phone Number"
+                                            className="enroll-modal-input enroll-input-phone"
+                                            required
+                                            aria-required="true"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
