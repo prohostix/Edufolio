@@ -41,6 +41,7 @@ const Dashboard = () => {
 
     // Toast notification
     const [toast, setToast] = useState({ show: false, message: '', type: '' });
+    const [questionsRefreshKey, setQuestionsRefreshKey] = useState(0);
 
     const categories = ['MBA', 'MCA', 'BBA', 'BCA', 'B.Com', 'M.Com', 'BA', 'MA', 'B.Sc', 'M.Sc', 'B.Tech', 'M.Tech', 'PhD', 'Diploma', 'Certificate'];
 
@@ -141,6 +142,8 @@ const Dashboard = () => {
                     enquiries: Math.max(0, prev.enquiries - 1),
                     newEnquiries: deletedEnq?.status === 'New' ? Math.max(0, prev.newEnquiries - 1) : prev.newEnquiries
                 }));
+            } else if (type === 'course-finder-questions') {
+                setQuestionsRefreshKey(prev => prev + 1);
             }
         } catch (err) {
             console.error('Delete error:', err);
@@ -1265,7 +1268,12 @@ const Dashboard = () => {
 
                     {/* Course Finder Questions Tab */}
                     {activeTab === 'coursefinder' && (
-                        <CourseFinderQuestionsTab showToast={showToast} token={localStorage.getItem('adminToken')} />
+                        <CourseFinderQuestionsTab 
+                            key={questionsRefreshKey}
+                            showToast={showToast} 
+                            token={localStorage.getItem('adminToken')} 
+                            openDeleteModal={openDeleteModal}
+                        />
                     )}
                 </div>
             </main>
@@ -2064,7 +2072,7 @@ export default Dashboard;
 const BLANK_OPT = { value: '', label: '', icon: 'fa-circle', categories: [], min: '', max: '' };
 const BLANK_Q = { question: '', field: '', order: 0, isActive: true, options: [{ ...BLANK_OPT }] };
 
-function CourseFinderQuestionsTab({ showToast, token }) {
+function CourseFinderQuestionsTab({ showToast, token, openDeleteModal }) {
     const [questions, setQuestions] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [modal, setModal] = React.useState(null);
@@ -2208,7 +2216,11 @@ function CourseFinderQuestionsTab({ showToast, token }) {
                             <button onClick={() => setModal({ mode: 'edit', data: JSON.parse(JSON.stringify(q)) })} style={cfIconBtn('#3B82F6')} title="Edit">
                                 <i className="fa-solid fa-pen"></i>
                             </button>
-                            <button onClick={() => deleteQ(q._id, q.question)} style={cfIconBtn('#DC2626')} title="Delete">
+                            <button 
+                                onClick={() => openDeleteModal('course-finder-questions', q._id, q.question)} 
+                                style={cfIconBtn('#DC2626')} 
+                                title="Delete"
+                            >
                                 <i className="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -2279,7 +2291,44 @@ function CourseFinderQuestionsTab({ showToast, token }) {
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
                                             <div>
                                                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>FA Icon</label>
-                                                <input value={opt.icon} onChange={e => setOpt(i, 'icon', e.target.value)} placeholder="fa-graduation-cap" style={{ ...cfInput, padding: '8px 12px' }} />
+                                                <div style={{ position: 'relative' }}>
+                                                    <select 
+                                                        value={opt.icon || 'fa-circle'} 
+                                                        onChange={e => setOpt(i, 'icon', e.target.value)} 
+                                                        style={{ ...cfInput, padding: '8px 12px 8px 35px' }}
+                                                    >
+                                                        <option value="fa-circle">Circle (Default)</option>
+                                                        <option value="fa-graduation-cap">Graduation Cap</option>
+                                                        <option value="fa-user-graduate">User Graduate</option>
+                                                        <option value="fa-book">Book</option>
+                                                        <option value="fa-book-open">Open Book</option>
+                                                        <option value="fa-briefcase">Briefcase</option>
+                                                        <option value="fa-building">Building</option>
+                                                        <option value="fa-laptop-code">Laptop Code</option>
+                                                        <option value="fa-microscope">Microscope</option>
+                                                        <option value="fa-flask">Flask</option>
+                                                        <option value="fa-chart-line">Chart Line</option>
+                                                        <option value="fa-money-bill-wave">Money Bill</option>
+                                                        <option value="fa-globe">Globe</option>
+                                                        <option value="fa-heart">Heart</option>
+                                                        <option value="fa-stethoscope">Stethoscope</option>
+                                                        <option value="fa-scale-balanced">Scale Balanced</option>
+                                                        <option value="fa-palette">Palette</option>
+                                                        <option value="fa-camera">Camera</option>
+                                                        <option value="fa-music">Music</option>
+                                                        <option value="fa-plane">Plane</option>
+                                                        <option value="fa-car">Car</option>
+                                                        <option value="fa-home">Home</option>
+                                                        <option value="fa-calendar-days">Calendar</option>
+                                                        <option value="fa-clock">Clock</option>
+                                                        <option value="fa-award">Award</option>
+                                                        <option value="fa-certificate">Certificate</option>
+                                                        <option value="fa-star">Star</option>
+                                                        <option value="fa-check">Check</option>
+                                                        <option value="fa-info-circle">Info Circle</option>
+                                                    </select>
+                                                    <i className={`fa-solid ${opt.icon || 'fa-circle'}`} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#FF6B35', pointerEvents: 'none' }}></i>
+                                                </div>
                                             </div>
                                             <div>
                                                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#64748B', marginBottom: '4px' }}>Min Fee</label>
