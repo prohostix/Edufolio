@@ -47,6 +47,8 @@ export async function POST(req) {
                         'Authorization': `Bearer ${integration.pypeCrmApiKey}`
                     },
                     body: JSON.stringify({
+                        apiKey: integration.pypeCrmApiKey,
+                        api_key: integration.pypeCrmApiKey, // Include both common formats
                         name,
                         email,
                         phone,
