@@ -1294,6 +1294,69 @@ const Dashboard = () => {
                         </div>
                     )}
 
+                    {/* Integrations Tab */}
+                    {activeTab === 'integrations' && (
+                        <div style={styles.card}>
+                            <div style={styles.cardHeader}>
+                                <h2 style={styles.cardTitle}>
+                                    <i className="fa-solid fa-plug" style={{ marginRight: '10px', color: '#FF6B35' }}></i>
+                                    PypeCRM Configuration
+                                </h2>
+                            </div>
+                            <form style={styles.form} onSubmit={handleIntegrationUpdate}>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>CRM API Key</label>
+                                    <input 
+                                        type="password" 
+                                        style={styles.input} 
+                                        value={integrationSettings.pypeCrmApiKey || ''}
+                                        onChange={(e) => setIntegrationSettings({ ...integrationSettings, pypeCrmApiKey: e.target.value })}
+                                        placeholder="Enter your PypeCRM API Key"
+                                    />
+                                    <span style={styles.helperText}>Used to authenticate requests to pypecrm.com</span>
+                                </div>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>API Endpoint URL</label>
+                                    <input 
+                                        type="text" 
+                                        style={styles.input} 
+                                        value={integrationSettings.pypeCrmEndpoint || ''}
+                                        onChange={(e) => setIntegrationSettings({ ...integrationSettings, pypeCrmEndpoint: e.target.value })}
+                                        placeholder="https://pypecrm.com/api/leads"
+                                    />
+                                    <span style={styles.helperText}>The destination URL for lead data</span>
+                                </div>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>Integration Status</label>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <button
+                                            type="button"
+                                            style={{
+                                                ...styles.statusToggle,
+                                                background: integrationSettings.isActive ? '#DCFCE7' : '#FEE2E2',
+                                                color: integrationSettings.isActive ? '#16A34A' : '#DC2626',
+                                                padding: '10px 20px'
+                                            }}
+                                            onClick={() => setIntegrationSettings({ ...integrationSettings, isActive: !integrationSettings.isActive })}
+                                        >
+                                            <i className={`fa-solid ${integrationSettings.isActive ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
+                                            {integrationSettings.isActive ? 'Active' : 'Inactive'}
+                                        </button>
+                                        <span style={styles.helperText}>
+                                            {integrationSettings.isActive ? 'Leads will be automatically forwarded to PypeCRM' : 'Auto-forwarding is disabled'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style={styles.formActions}>
+                                    <button type="submit" style={styles.submitBtn}>
+                                        <i className="fa-solid fa-save"></i>
+                                        Save Integration Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+
                     {/* Course Finder Questions Tab */}
                     {activeTab === 'coursefinder' && (
                         <CourseFinderQuestionsTab 
