@@ -254,6 +254,45 @@ const Dashboard = () => {
         }
     };
 
+    const handleExportEnquiries = () => {
+        const data = getFilteredEnquiries();
+        if (data.length === 0) {
+            showToast('No enquiries to export', 'error');
+            return;
+        }
+
+        // CSV Header
+        const headers = ['Date', 'Name', 'Email', 'Phone', 'University', 'Program', 'Status', 'Message'];
+        
+        // CSV Rows
+        const rows = data.map(enq => [
+            new Date(enq.createdAt).toLocaleDateString(),
+            `"${enq.name?.replace(/"/g, '""') || ''}"`,
+            `"${enq.email?.replace(/"/g, '""') || ''}"`,
+            `"${enq.phone?.replace(/"/g, '""') || ''}"`,
+            `"${enq.universityId?.name?.replace(/"/g, '""') || 'N/A'}"`,
+            `"${enq.programId?.name?.replace(/"/g, '""') || 'N/A'}"`,
+            `"${enq.status || ''}"`,
+            `"${enq.message?.replace(/"/g, '""') || ''}"`
+        ]);
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(r => r.join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Edufolio_Enquiries_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Enquiries exported successfully');
+    };
+
     // Filter functions
     const getFilteredUniversities = () => {
         let filtered = [...universities];
@@ -1079,6 +1118,18 @@ const Dashboard = () => {
                                     <option value="newest">Newest First</option>
                                     <option value="oldest">Oldest First</option>
                                 </select>
+                                <button 
+                                    onClick={handleExportEnquiries}
+                                    style={{
+                                        ...styles.addBtn,
+                                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                                        boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+                                        height: '46px',
+                                        padding: '0 20px'
+                                    }}
+                                >
+                                    <i className="fa-solid fa-file-excel"></i> Export to Excel
+                                </button>
                             </div>
 
                             {/* Results count */}
