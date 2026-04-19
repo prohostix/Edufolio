@@ -24,6 +24,11 @@ const Dashboard = () => {
         author: '',
         ogImage: ''
     });
+    const [integrationSettings, setIntegrationSettings] = useState({
+        pypeCrmApiKey: '',
+        pypeCrmEndpoint: '',
+        isActive: false
+    });
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const { isAuthenticated, admin, logout, loading: authLoading } = useContext(AuthContext);
@@ -76,12 +81,13 @@ const Dashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            const [statsRes, uniRes, progRes, enqRes, seoRes] = await Promise.all([
+            const [statsRes, uniRes, progRes, enqRes, seoRes, integrationSettingsRes] = await Promise.all([
                 axios.get(`${API_BASE}/admin/stats`, config),
                 axios.get(`${API_BASE}/admin/universities`, config),
                 axios.get(`${API_BASE}/admin/programs`, config),
                 axios.get(`${API_BASE}/admin/enquiries`, config),
-                axios.get(`${API_BASE}/seo`)
+                axios.get(`${API_BASE}/seo`),
+                axios.get(`${API_BASE}/admin/integrations`, config)
             ]);
 
             setStats(statsRes.data);
@@ -89,6 +95,7 @@ const Dashboard = () => {
             setPrograms(progRes.data);
             setEnquiries(enqRes.data);
             if (seoRes.data) setSeoSettings(seoRes.data);
+            if (integrationSettingsRes.data) setIntegrationSettings(integrationSettingsRes.data);
         } catch (err) {
             console.error('Error fetching data:', err);
             if (err.response?.status === 401) {
@@ -231,6 +238,19 @@ const Dashboard = () => {
         } catch (err) {
             console.error('SEO update error:', err);
             showToast('Failed to update SEO settings', 'error');
+        }
+    };
+
+    const handleIntegrationUpdate = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('adminToken');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            await axios.put(`${API_BASE}/admin/integrations`, integrationSettings, config);
+            showToast('Integration settings updated successfully', 'success');
+        } catch (err) {
+            console.error('Integration update error:', err);
+            showToast('Failed to update integration settings', 'error');
         }
     };
 
@@ -458,6 +478,13 @@ const Dashboard = () => {
                         <i className="fa-solid fa-wand-magic-sparkles"></i>
                         <span>Course Finder</span>
                     </button>
+                    <button
+                        style={activeTab === 'integrations' ? styles.navItemActive : styles.navItem}
+                        onClick={() => handleTabChange('integrations')}
+                    >
+                        <i className="fa-solid fa-plug"></i>
+                        <span>Integrations</span>
+                    </button>
                 </nav>
 
                 <div style={styles.sidebarFooter}>
@@ -484,6 +511,7 @@ const Dashboard = () => {
                             {activeTab === 'enquiries' && 'Enquiries'}
                             {activeTab === 'seo' && 'SEO Configuration'}
                             {activeTab === 'coursefinder' && 'Course Finder Questions'}
+                            {activeTab === 'integrations' && 'CRM Integrations'}
                         </h1>
                         <p style={styles.pageSubtitle}>
                             Welcome back, {admin?.name || 'Admin'}! 👋

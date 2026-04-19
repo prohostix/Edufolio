@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Enquiry from '@/models/Enquiry';
+import Integration from '@/models/integrationModel';
 import connectDB from '@/lib/db';
 
 export async function POST(req) {
@@ -33,6 +34,33 @@ export async function POST(req) {
         });
 
         await newEnquiry.save();
+
+        // PypeCRM Integration: Send lead to CRM if active
+        try {
+            const integration = await Integration.findOne({ isActive: true });
+            if (integration && integration.pypeCrmApiKey) {
+                // Forward enquiry to PypeCRM asynchronously
+                fetch(integration.pypeCrmEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${integration.pypeCrmApiKey}`
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone,
+                        message: message || '',
+                        source: 'Edufolio Website',
+                        universityId: universityId || undefined,
+                        programId: programId || undefined,
+                        enquiryId: newEnquiry._id
+                    })
+                }).catch(crmErr => console.error("PypeCRM API Error:", crmErr));
+            }
+        } catch (settingsErr) {
+            console.error("CRM Settings Error:", settingsErr);
+        }
 
         return NextResponse.json({
             message: 'Thank you! Your enquiry has been submitted successfully.',
