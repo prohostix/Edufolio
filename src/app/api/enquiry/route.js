@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import Enquiry from '@/models/Enquiry';
 import Integration from '@/models/integrationModel';
+import University from '@/models/University';
+import Program from '@/models/Program';
 import connectDB from '@/lib/db';
 
 export async function POST(req) {
@@ -39,6 +41,23 @@ export async function POST(req) {
         try {
             const integration = await Integration.findOne({ isActive: true });
             if (integration && integration.pypeCrmApiKey) {
+                // Fetch University and Program names for context
+                let enquiryAbout = 'General Inquiry';
+                if (universityId || programId) {
+                    const [uni, prog] = await Promise.all([
+                        universityId ? University.findById(universityId).select('name') : null,
+                        programId ? Program.findById(programId).select('name') : null
+                    ]);
+                    
+                    if (uni && prog) {
+                        enquiryAbout = `${prog.name} at ${uni.name}`;
+                    } else if (uni) {
+                        enquiryAbout = `University: ${uni.name}`;
+                    } else if (prog) {
+                        enquiryAbout = `Program: ${prog.name}`;
+                    }
+                }
+
                 // Forward enquiry to PypeCRM asynchronously
                 fetch(integration.pypeCrmEndpoint, {
                     method: 'POST',
@@ -56,6 +75,7 @@ export async function POST(req) {
                         source: 'Edufolio Website',
                         universityId: universityId || undefined,
                         programId: programId || undefined,
+                        enquiryAbout, // Added descriptive field
                         enquiryId: newEnquiry._id
                     })
                 }).catch(crmErr => console.error("PypeCRM API Error:", crmErr));
