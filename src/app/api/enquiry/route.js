@@ -25,6 +25,21 @@ export async function POST(req) {
             return NextResponse.json({ message: 'Please provide a valid phone number' }, { status: 400 });
         }
 
+        // Duplicate check: Same phone number on the same day
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const existingEnquiry = await Enquiry.findOne({
+            phone: phone,
+            createdAt: { $gte: startOfDay }
+        });
+
+        if (existingEnquiry) {
+            return NextResponse.json({ 
+                message: 'You have already submitted an enquiry today. Our team will get back to you soon!' 
+            }, { status: 400 });
+        }
+
         const newEnquiry = new Enquiry({
             name,
             email,
