@@ -1711,7 +1711,9 @@ const Programs = () => {
 
                                             <div className="fee-section">
                                                 <div className="fee-info">
-                                                    <span className="fee-label">Total Fee</span>
+                                                    <span className="fee-label">
+                                                        {program.feePeriod === 'Per Semester' ? 'Fee per Semester' : program.feePeriod === 'Per Year' ? 'Yearly Fee' : program.feePeriod === 'Per Month' ? 'Monthly Fee' : 'Total Fee'}
+                                                    </span>
                                                     <span className="fee-amount">
                                                         ₹{Number(program.fee).toLocaleString('en-IN')}
                                                     </span>
@@ -1719,7 +1721,12 @@ const Programs = () => {
                                                 <div className="emi-info">
                                                     <span className="emi-label">EMI from</span>
                                                     <span className="emi-amount">
-                                                        ₹{Math.round(program.fee / 24).toLocaleString('en-IN')}/mo
+                                                        ₹{Math.round(
+                                                            program.feePeriod === 'Per Semester' ? program.fee / 6 :
+                                                            program.feePeriod === 'Per Year' ? program.fee / 12 :
+                                                            program.feePeriod === 'Per Month' ? program.fee :
+                                                            program.fee / 24
+                                                        ).toLocaleString('en-IN')}/mo
                                                     </span>
                                                 </div>
                                             </div>

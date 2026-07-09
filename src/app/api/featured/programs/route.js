@@ -11,7 +11,7 @@ export async function GET() {
             featured: true
         })
             .populate('universityId', 'name logo')
-            .select('name slug category level fee duration universityId')
+            .select('name slug category level fee feePeriod duration universityId')
             .limit(8)
             .lean();
 

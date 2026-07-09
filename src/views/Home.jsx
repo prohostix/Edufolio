@@ -1940,7 +1940,9 @@ const Home = () => {
 
                                         <div className="program-fee">
                                             <div className="fee-info">
-                                                <span className="fee-label">Total Fee</span>
+                                                <span className="fee-label">
+                                                    {program.feePeriod === 'Per Semester' ? 'Fee per Semester' : program.feePeriod === 'Per Year' ? 'Yearly Fee' : program.feePeriod === 'Per Month' ? 'Monthly Fee' : 'Total Fee'}
+                                                </span>
                                                 <span className="fee-amount">
                                                     ₹{Number(program.fee).toLocaleString('en-IN')}
                                                 </span>

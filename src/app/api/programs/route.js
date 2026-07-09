@@ -35,7 +35,7 @@ export async function GET(req) {
 
         const programs = await Program.find(query)
             .populate('universityId', 'name logo location rating')
-            .select('name slug category level fee duration mode universityId featured')
+            .select('name slug category level fee feePeriod duration mode universityId featured')
             .sort({ featured: -1, createdAt: -1 })
             .lean();
 
