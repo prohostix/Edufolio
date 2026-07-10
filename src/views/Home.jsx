@@ -1758,12 +1758,10 @@ const Home = () => {
                                 <span className="hero-badge-text">India's #1 Online Education Platform</span>
                             </span>
                             <h1 className="hero-title">
-                                Transform Your Career with{' '}
-                                <span className="highlight">Online Degrees</span>
+                                The Best <span className="highlight">Online Degree Institution</span> & Career Center
                             </h1>
                             <p className="hero-subtitle">
-                                Get UGC-approved degrees from India's top universities.
-                                Study at your own pace, from anywhere in the world.
+                                Partnered with India's top UGC-DEB approved universities. Headquartered in Kochi, Kerala, helping students nationwide find and enroll in premium online degrees.
                             </p>
                             <div className="tagline">
                                 <span className="tagline-item">learn.</span>

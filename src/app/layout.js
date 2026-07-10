@@ -13,8 +13,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Edufolio - Find Your Perfect Program",
-  description: "Browse top universities and programs with Edufolio.",
+  title: "Edufolio | Best Online Degree Institution & Career Center Kochi, Kerala",
+  description: "Edufolio is India's leading online education advisor and degree center based in Kochi, Kerala. Get UGC-DEB approved MBA, MCA, BBA, BCA, and B.Com degrees from India's top accredited online universities. Compare programs, find affordable fees, and receive free expert counseling.",
+  keywords: "best online degree center, best online degree institution, online education center Kochi, UGC approved online degree, online MBA Kochi Kerala, online MCA, Edufolio Kochi, online learning portal Kerala",
+  metadataBase: new URL("https://edufolio.org"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Edufolio | Best Online Degree Institution & Career Center Kochi",
+    description: "Find your perfect UGC-approved online degree with Edufolio. Based in Kochi, Kerala, guiding students nationwide to top university programs.",
+    url: "https://edufolio.org",
+    siteName: "Edufolio",
+    locale: "en_IN",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
